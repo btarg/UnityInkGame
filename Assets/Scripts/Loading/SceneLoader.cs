@@ -26,12 +26,18 @@ public class SceneLoader : MonoBehaviour
         return instance;
     }
 
-    public void LoadFromFile()
+    public void QuickLoad() {
+        int saveSlot = PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0);
+        LoadFromFile(saveSlot);
+    }
+
+    public void LoadFromFile(int saveSlot)
     {
-        currentSave = SaveHelper.currentSaveObject();
+        currentSave = SaveManager.Load(saveSlot);
 
         // Default to loading a new game if there is no save present
-        if (currentSave == null) {
+        if (currentSave == null)
+        {
             SceneManager.LoadScene("TestLevel");
             return;
         }
@@ -66,6 +72,21 @@ public class SceneLoader : MonoBehaviour
         // Move player and rotate camera
         player.transform.SetPositionAndRotation(savedPlayerPosition, player.transform.rotation);
         playerCamera.transform.SetPositionAndRotation(playerCamera.transform.position, savedCameraRotation);
+
+        InventoryObject inventoryObject = player.GetComponentInChildren<InventoryObject>();
+
+        // Load the full inventory and the equipped item slot
+        inventoryObject.Container = currentSave.inventory;
+        inventoryObject.EquipSlot(currentSave.equippedSlot);
+        inventoryObject.pickedUpItems = currentSave.pickedUpItems;
+
+        // Remove previously collected items
+        foreach (string name in inventoryObject.pickedUpItems)
+        {
+            GameObject go = GameObject.Find(name);
+            if (go.CompareTag("ItemPickup"))
+                Destroy(go);
+        }
 
     }
 

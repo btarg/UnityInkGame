@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using UnityEngine;
 [System.Serializable]
 
 public class SaveObject
@@ -12,5 +14,10 @@ public class SaveObject
     public SerializableVector3 playerPosition;
     public SerializableVector3 playerRotationEuler;
     public SerializableVector3 cameraRotationEuler;
+
+    public Inventory inventory;
+    public InventorySlot equippedSlot;
+
+    public List<string> pickedUpItems;
 
 }

@@ -1,7 +1,27 @@
 INCLUDE ../functions.ink
+INCLUDE ../globals.ink
 
-This is a test! #continueafter:1.0 #speaker:TestNPC #delay:0.1
-You don't have to press anything! #continueafter:2.0 #speaker:TestNPC #delay:0.1
-Sit back and #continueafter:0.1 #speaker:TestNPC
-relaaaaaaaaaaaaxxxxx #delay:0.10 #speaker:TestNPC
+{getEquippedItem()}
+{spoke_to_npc == true: -> already_spoken | -> start}
+
+=== already_spoken ===
+That item was super neat!
+-> END
+
+=== start ===
+{ equipped_item_id == -1: -> no_item | -> has_an_item }
+-> END
+
+=== no_item ===
+You would look really cool with an <color=yellow>item</color>!
+It's a shame you don't have one...
+-> END
+
+=== has_an_item ===
+Woah, that's a cool <color=yellow>{equipped_item_name}</color> you've got there!
+~ spoke_to_npc = true
+{ equipped_item_amount > 1: -> lots | -> END}
+
+=== lots ===
+Wow, you have <color=yellow>{equipped_item_amount}</color> of them!?
 -> END

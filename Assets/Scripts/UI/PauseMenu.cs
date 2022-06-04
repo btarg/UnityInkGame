@@ -13,7 +13,8 @@ public class PauseMenu : MonoBehaviour
     SceneLoader loader;
 
     public static bool GameIsPaused = false;
-    public bool canPause = true;
+    public static bool PauseMenuOpen = false;
+    public static bool canPause = true;
     GameObject pauseMenuUI;
     GameObject playerObject;
     [SerializeField] GameObject firstButtonSelected;
@@ -28,10 +29,17 @@ public class PauseMenu : MonoBehaviour
     KinematicPlayer kinematicPlayer;
     bool couldMove = true;
 
+    SaveHelper helper;
+
+    private void Awake() {
+        helper = gameObject.AddComponent<SaveHelper>();
+    }
+
     // Make sure the game isn't paused on startup
     void Start()
     {
-        pauseMenuUI = gameObject.transform.GetChild(0).gameObject;
+        pauseMenuUI = getPauseMenuUI();
+        pauseMenuUI.SetActive(false);
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
 
         // Use new input system
@@ -45,6 +53,10 @@ public class PauseMenu : MonoBehaviour
         kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
 
         Resume();
+    }
+
+    private void OnDisable() {
+        controls.UI.PauseMenu.performed -= HandlePause;
     }
 
     // Update is called once per frame
@@ -64,9 +76,18 @@ public class PauseMenu : MonoBehaviour
 
     public void HandlePause(InputAction.CallbackContext value)
     {
-
-        if (!canPause || DialogueManager.GetInstance().dialogueIsPlaying)
+        if (!canPause || DialogueManager.GetInstance().dialogueIsPlaying || InventoryUIManager.inventoryIsOpen)
             return;
+
+        disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+
+        pauseMenuUI = getPauseMenuUI();
+
+        if (pauseMenuUI == null) {
+            return;
+        }
 
         if (GameIsPaused)
         {
@@ -76,7 +97,8 @@ public class PauseMenu : MonoBehaviour
         else
         {
             Debug.Log("Game Paused");
-            Pause();
+            StopTime();
+            OpenPauseMenu();
         }
     }
 
@@ -88,6 +110,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         GameIsPaused = false;
+        PauseMenuOpen = false;
 
         // Enable all objects in list
         EnableAll();
@@ -97,34 +120,48 @@ public class PauseMenu : MonoBehaviour
 
     }
 
-    public void Pause()
+    public GameObject getPauseMenuUI()
     {
-        pauseMenuUI = gameObject.transform.GetChild(0).gameObject;
-        
-        disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
-        playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+        // stupid hacky shit because GetChild sucks
+        foreach (Transform child in gameObject.transform)
+        {
+            if (child.gameObject.CompareTag("PauseMenu"))
+            {
+                return child.gameObject;
+            }
+        }
+        return null;
+    }
+
+    public void OpenPauseMenu()
+    {
+        PauseMenuOpen = true;
 
         // Pause Game
         pauseMenuUI.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(firstButtonSelected);
-        
+
         SaveObject currentSave = SaveHelper.currentSaveObject();
 
         // Display timestamp or "never"
         string lastSave = "Never";
-        if (currentSave != null) {
-            lastSave = DateTime.FromFileTime(currentSave.timestamp).ToString();;
+        if (currentSave != null)
+        {
+            lastSave = DateTime.FromFileTime(currentSave.timestamp).ToString();
         }
-        
+
         saveDetailsText.text = "Last save:<br><color=yellow>" + lastSave + "</color>";
 
         // Enable all buttons (we disable the save button after click to prevent spamming)
-        foreach (Button b in pauseMenuUI.GetComponentsInChildren<Button>()) {
+        foreach (Button b in pauseMenuUI.GetComponentsInChildren<Button>())
+        {
             b.enabled = true;
         }
+    }
 
+    public void StopTime()
+    {
         Time.timeScale = 0f;
         GameIsPaused = true;
 
@@ -150,20 +187,20 @@ public class PauseMenu : MonoBehaviour
 
     public void MenuButton()
     {
-        SaveHelper.Save();
+        helper.Save();
         SceneManager.LoadScene("MainMenu");
 
     }
 
     public void LoadButton()
     {
-        loader.LoadFromFile();
+        loader.QuickLoad();
         Resume();
     }
 
     public void SaveButton()
     {
-        SaveHelper.Save();
+        helper.Save();
 
         Resume();
         onSaved.Invoke();

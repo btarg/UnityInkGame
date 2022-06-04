@@ -10,8 +10,8 @@ using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour
 {
     [Header("Params")]
-    [SerializeField] private float typingSpeedDefault = 0.04f;
-    private float typingSpeed = 0.04f;
+    [SerializeField] private float typingSpeedDefault = 0.05f;
+    private float typingSpeed = 0.05f;
 
     [Header("Load Globals JSON")]
     [SerializeField] private TextAsset loadGlobalsJSON;
@@ -33,6 +33,7 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Characters")]
     [SerializeField] private CharacterScriptableObject[] characterScriptableObjects;
+    [SerializeField] private AudioClip defaultTypingClip;
 
     // Sound manager should be private as it is added by the script
     private SoundManager soundManager;
@@ -147,17 +148,38 @@ public class DialogueManager : MonoBehaviour
         dialogueVariables.StartListening(currentStory);
 
         // reset portrait, layout, and speaker
+        // remove the name tag by default
+        displayNameText.transform.parent.gameObject.SetActive(false);
         displayNameText.text = "???";
         portraitAnimator.Play("default");
+        currentCharacter = null;
 
         // add functions to ink
         currentStory.BindExternalFunction("playSound", (string name) =>
         {
             soundManager.Play(name);
         });
-        // currentStory.BindExternalFunction ("playSound", (string name, float volume, float pitch, float delay) => {
-        //     soundManager.Play(name);
-        // });
+
+        currentStory.BindExternalFunction("getEquippedItem", () =>
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            InventorySlot inventorySlot = playerObject.GetComponent<InventoryObject>().getEquippedSlot();
+            
+            if (inventorySlot != null && inventorySlot.item != null) {
+                
+                currentStory.variablesState["equipped_item_id"] = inventorySlot.ID;
+                currentStory.variablesState["equipped_item_name"] = inventorySlot.item.displayName;
+                currentStory.variablesState["equipped_item_amount"] = inventorySlot.amount;
+
+            } else {
+                currentStory.variablesState["equipped_item_id"] = -1;
+                currentStory.variablesState["equipped_item_name"] = "";
+                currentStory.variablesState["equipped_item_amount"] = "";
+            }
+
+            
+            
+        });
 
         ContinueStory();
     }
@@ -298,7 +320,10 @@ public class DialogueManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(typingSpeed);
                 dialogueText.maxVisibleCharacters++;
-                PlayTypingSound();
+
+                // only play the sound if the character is not a space or dot
+                if (!string.IsNullOrWhiteSpace(letter.ToString()) && letter.ToString() != ".")
+                    PlayTypingSound();
             }
         }
 
@@ -308,9 +333,14 @@ public class DialogueManager : MonoBehaviour
     }
 
     private void PlayTypingSound()
-    {
-        if (currentCharacter != null && currentCharacter.characterTypingSounds.Length > 0)
-            soundManager.PlayRandomClip(currentCharacter.characterTypingSounds);
+    { 
+        if (currentCharacter != null) {
+            if (currentCharacter.characterTypingSounds.Length > 0)
+                soundManager.PlayRandomClip(currentCharacter.characterTypingSounds);
+        } else if (defaultTypingClip != null) {
+            soundManager.PlayClip(defaultTypingClip);
+        }
+            
     }
 
     IEnumerator ContinueToNextLine()
@@ -374,11 +404,8 @@ public class DialogueManager : MonoBehaviour
 
                     if (currentCharacter != null)
                     {
+                        displayNameText.transform.parent.gameObject.SetActive(true);
                         displayNameText.text = currentCharacter.characterName;
-                    }
-                    else
-                    {
-                        displayNameText.text = "???";
                     }
 
                     break;

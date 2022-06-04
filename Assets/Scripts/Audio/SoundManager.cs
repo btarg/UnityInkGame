@@ -41,7 +41,7 @@ public class SoundManager : MonoBehaviour
         
     }
 
-    public void PlayClip(AudioClip clip, float volume, float pitch, float delay)
+    public void PlayClip(AudioClip clip, float volume = 1.0f, float pitch = 1.0f, float delay = 0f)
     {
         audioSource.clip = clip;
         audioSource.volume = volume;

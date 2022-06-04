@@ -5,7 +5,7 @@ using System;
 
 public class InteractiveObject : MonoBehaviour
 {
-    public enum InteractionType {Generic, Talk};
+    public enum InteractionType {Generic, Talk, Pickup};
 
     public InteractionType interactionType = InteractionType.Generic;
     public UnityEvent onPlayerInteract;
@@ -24,11 +24,10 @@ public class InteractiveObject : MonoBehaviour
 
         if (character != null)
         {
-            InteractiveObject io = gameObject.GetComponent<InteractiveObject>();
             string characterColor = ColorUtility.ToHtmlStringRGB(character.characterColor);
             string colouredName = String.Format("<color=#{0}>{1}</color>", characterColor, character.characterName);
             string interactMessage = "";
-            switch (io.interactionType)
+            switch (interactionType)
             {
                 case InteractiveObject.InteractionType.Talk:
                     interactMessage = "Speak to ";
@@ -39,6 +38,25 @@ public class InteractiveObject : MonoBehaviour
             }
 
             interactionDescription = interactMessage + colouredName;
+        }
+
+        ItemPickup itemPickup = gameObject.GetComponent<ItemPickup>();
+
+        if (itemPickup != null) {
+
+            string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
+            string interactMessage = "Look at ";
+            switch (interactionType)
+            {
+                case InteractiveObject.InteractionType.Pickup:
+                    if (itemPickup.canPickup) {
+                        interactMessage = "Take ";
+                    }
+                    break;
+            }
+
+            interactionDescription = interactMessage + colouredName;
+
         }
     }
 

@@ -101,6 +101,7 @@ MonoBehaviour:
   interactPrompt: {fileID: 0}
   genericInteractionCrosshair: {fileID: 21300000, guid: a53aeffc50d868d40bfc2a6dc811fa95, type: 3}
   talkInteractionCrosshair: {fileID: 21300000, guid: 5c3992f40bb13e6438e271bec81c1d0b, type: 3}
+  pickupInteractionCrosshair: {fileID: 0}
 --- !u!1 &8920314699746041386
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,6 +118,7 @@ GameObject:
   - component: {fileID: 8920314699746041557}
   - component: {fileID: 8920314699746041559}
   - component: {fileID: 8920314699746041556}
+  - component: {fileID: 6079877941317429719}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -293,12 +295,56 @@ MonoBehaviour:
     m_ActionName: FirstPerson/Interact[/Keyboard/e,/DualShock4GamepadHID/buttonEast]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: f7e52aaa-cd7d-487d-826c-0a1a55a5e70f
-    m_ActionName: UI/Submit[/Keyboard/enter,/DualShock4GamepadHID/buttonSouth,/Keyboard/space]
+    m_ActionId: e4471c8c-507a-4bd5-871c-04bd83949fef
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: a5a3827a-35e9-4b85-b8d5-2dc151c83f58
-    m_ActionName: UI/PauseMenu[/Keyboard/escape,/DualShock4GamepadHID/start]
+    m_ActionId: 42880612-2928-48c4-bfef-86798240c7af
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: de774062-3856-41b3-a5ab-41a74fb6fa14
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6e30aa3b-e185-42a1-ad13-a108e412260a
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6cbe3c3c-3b96-4a2b-9a0e-2ddb6e16a947
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 02ee5354-3c73-4351-87ab-6b4a07ccb94c
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: d3094aae-0a4c-4f12-9909-6c7fc52cb577
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: fd75a46f-1212-45dd-b6e2-c8acaa8febb8
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1551e05c-0e0e-4960-bc2c-e5b7962e5cbb
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c0ede419-e7c8-4afe-b441-b65002da2d29
+    m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: deb316d1-7d21-4902-a4d9-8b9fde6d84aa
+    m_ActionName: UI/PauseMenu[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 772e405c-c476-4274-86a1-85469f8db4de
+    m_ActionName: InputBox/Navigate[/Keyboard/downArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1f167b97-3cbd-4a40-b066-e40c5dba9906
+    m_ActionName: UI/Inventory[/Keyboard/i]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: FirstPerson
@@ -359,3 +405,35 @@ MonoBehaviour:
   m_center: {x: 0, y: 0, z: 0}
   m_radius: 0.5
   m_height: 2
+--- !u!114 &6079877941317429719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8920314699746041386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f35372b19d00124baf08d2c0bdff037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Container:
+    Items:
+    - ID: -1
+      item: {fileID: 0}
+      amount: 0
+    - ID: -1
+      item: {fileID: 0}
+      amount: 0
+    - ID: -1
+      item: {fileID: 0}
+      amount: 0
+    - ID: -1
+      item: {fileID: 0}
+      amount: 0
+    - ID: -1
+      item: {fileID: 0}
+      amount: 0
+    - ID: -1
+      item: {fileID: 0}
+      amount: 0

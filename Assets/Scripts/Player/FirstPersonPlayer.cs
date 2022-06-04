@@ -13,6 +13,7 @@ public class FirstPersonPlayer : MonoBehaviour
     [Header("Sprites")]
     [SerializeField] Sprite genericInteractionCrosshair;
     [SerializeField] Sprite talkInteractionCrosshair;
+    [SerializeField] Sprite pickupInteractionCrosshair;
 
     PlayerControls controls;
     bool isPressingInteract;
@@ -63,6 +64,9 @@ public class FirstPersonPlayer : MonoBehaviour
                         break;
                     case InteractiveObject.InteractionType.Talk:
                         interactPrompt.GetComponentInChildren<Image>().sprite = talkInteractionCrosshair;
+                        break;
+                    case InteractiveObject.InteractionType.Pickup:
+                        interactPrompt.GetComponentInChildren<Image>().sprite = pickupInteractionCrosshair;
                         break;
                 }
 

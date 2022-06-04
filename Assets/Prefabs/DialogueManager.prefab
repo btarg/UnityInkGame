@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73bffb575d8cdcf42ba34ef7f5c34fae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typingSpeedDefault: 0.04
+  typingSpeedDefault: 0.05
   loadGlobalsJSON: {fileID: 4900000, guid: 887664fee91ae02418ad84c36b9b5e18, type: 3}
   dialoguePanel: {fileID: 0}
   continueIcon: {fileID: 0}
@@ -61,3 +61,4 @@ MonoBehaviour:
   inputUIElement: {fileID: 0}
   characterScriptableObjects:
   - {fileID: 11400000, guid: d62067460959dd7418c3f2caf0490090, type: 2}
+  defaultTypingClip: {fileID: 0}
