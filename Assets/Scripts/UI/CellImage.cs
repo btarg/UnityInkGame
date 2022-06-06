@@ -48,15 +48,13 @@ public class CellImage : MonoBehaviour
         }
 
         // Load save when button is clicked
-        loadButton.onClick.AddListener(() => SelectThisSlot(saveSlot));
+        loadButton.onClick.AddListener(() => SelectThisSlot());
 
     }
 
-    void SelectThisSlot(int saveSlot)
+    void SelectThisSlot()
     {
-
         gameObject.GetComponent<MainMenuHighlight>().OnHighlight();
-
         MainMenu menu = GetComponentInParent<MainMenu>();
         menu.SelectCell(this);
 

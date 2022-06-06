@@ -5,7 +5,7 @@ using System;
 
 public class InteractiveObject : MonoBehaviour
 {
-    public enum InteractionType {Generic, Talk, Pickup};
+    public enum InteractionType { Generic, Talk, Pickup };
 
     public InteractionType interactionType = InteractionType.Generic;
     public UnityEvent onPlayerInteract;
@@ -42,14 +42,16 @@ public class InteractiveObject : MonoBehaviour
 
         ItemPickup itemPickup = gameObject.GetComponent<ItemPickup>();
 
-        if (itemPickup != null) {
+        if (itemPickup != null)
+        {
 
             string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
             string interactMessage = "Look at ";
             switch (interactionType)
             {
                 case InteractiveObject.InteractionType.Pickup:
-                    if (itemPickup.canPickup) {
+                    if (itemPickup.canPickup)
+                    {
                         interactMessage = "Take ";
                     }
                     break;
@@ -69,8 +71,14 @@ public class InteractiveObject : MonoBehaviour
             StartCoroutine(CooldownTimer());
     }
 
-    IEnumerator CooldownTimer() {
+    IEnumerator CooldownTimer()
+    {
         canInteract = false;
+
+        // do not activate cooldown until there is no dialogue playing
+        yield return new WaitForEndOfFrame();
+        yield return new WaitWhile(() => DialogueManager.GetInstance().dialogueIsPlaying);
+
         yield return new WaitForSeconds(cooldownTime);
         canInteract = true;
     }

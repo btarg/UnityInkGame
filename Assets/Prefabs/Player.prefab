@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8920314699531752254}
   m_Layer: 0
   m_Name: PlayerCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -437,3 +437,4 @@ MonoBehaviour:
     - ID: -1
       item: {fileID: 0}
       amount: 0
+  pickedUpItems: []

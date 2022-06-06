@@ -48,6 +48,7 @@ public class MainMenu : MonoBehaviour
         if (!EventSystem.current.alreadySelecting)
         {
             EventSystem.current.SetSelectedGameObject(playButton.gameObject);
+            playButton.gameObject.GetComponent<ColourOnHover>().OnSelected();
         }
 
         // Reset buttons
