@@ -16,12 +16,10 @@ public class InteractiveObject : MonoBehaviour
     public string interactionDescription = "Interact";
 
     [Header("Character Properties")]
-    [SerializeField] private string characterScriptableObjectName;
+    [SerializeField] private CharacterScriptableObject character;
 
     private void Start()
     {
-        CharacterScriptableObject character = DialogueManager.GetInstance().GetCharacterByName(characterScriptableObjectName);
-
         if (character != null)
         {
             string characterColor = ColorUtility.ToHtmlStringRGB(character.characterColor);

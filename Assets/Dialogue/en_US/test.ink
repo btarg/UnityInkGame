@@ -1,11 +1,16 @@
 INCLUDE ../functions.ink
 INCLUDE ../globals.ink
 
-{getEquippedItem()}
+~ getEquippedItem()
 {spoke_to_npc == true: -> already_spoken | -> start}
 
 === already_spoken ===
 That item was super neat!
+-> END
+
+=== already_given_item ===
+I hope you like my item!
+You should try <color=yellow>Equipping</color> it.
 -> END
 
 === start ===
@@ -13,8 +18,14 @@ That item was super neat!
 -> END
 
 === no_item ===
+{ has_given_item == true: -> already_given_item | -> give_item }
+-> END
+
+=== give_item ===
 You would look really cool with an <color=yellow>item</color>!
-It's a shame you don't have one...
+{givePlayerItem(1, 2)}
+Enjoy!
+~ has_given_item = true
 -> END
 
 === has_an_item ===

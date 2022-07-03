@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -109,11 +110,12 @@ public class DialogueManager : MonoBehaviour
     void OnNavigatePressed(InputAction.CallbackContext context)
     {
         // We are pressing down to get to the submit button the input screen
-        if (waitingForInput) {
+        if (waitingForInput)
+        {
             SelectSubmitButton(null);
         }
     }
-    
+
     void OnSubmitPressed(InputAction.CallbackContext context)
     {
         skipTyping = true;
@@ -164,22 +166,49 @@ public class DialogueManager : MonoBehaviour
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
             InventorySlot inventorySlot = playerObject.GetComponent<InventoryObject>().getEquippedSlot();
-            
-            if (inventorySlot != null && inventorySlot.item != null) {
-                
+
+            if (inventorySlot != null && inventorySlot.item != null)
+            {
+
                 currentStory.variablesState["equipped_item_id"] = inventorySlot.ID;
                 currentStory.variablesState["equipped_item_name"] = inventorySlot.item.displayName;
                 currentStory.variablesState["equipped_item_amount"] = inventorySlot.amount;
 
-            } else {
+            }
+            else
+            {
                 currentStory.variablesState["equipped_item_id"] = -1;
                 currentStory.variablesState["equipped_item_name"] = "";
                 currentStory.variablesState["equipped_item_amount"] = "";
             }
 
-            
-            
         });
+
+
+        // Declare this function outside of the bind to allow for a return value
+        Func<int, int, string> givePlayerItem = (int itemID, int amount) => {
+            
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            InventoryObject inventory = playerObject.GetComponent<InventoryObject>();
+
+            // Get the item using its id - script always in level holds items to check against
+            InventoryItem item = InkItemReferencesHolder.GetItemFromId(itemID);
+            string itemName = item.displayName;
+
+            inventory.AddItem(item, amount);
+            
+            string amountString = "a";
+
+            if (amount > 1) {
+                amountString = amount.ToString();
+                itemName += "s";
+            }
+            string itemDisplayLine = String.Format("(You received {0} <color=yellow>{1}</color>.)", amountString, itemName);
+
+            return itemDisplayLine;
+        };
+
+        currentStory.BindExternalFunction("givePlayerItem", givePlayerItem);
 
         ContinueStory();
     }
@@ -211,7 +240,7 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(WaitForInput(outVar));
     }
 
-    private IEnumerator WaitForInput(string outVar)
+    private IEnumerator WaitForInput(string outputInkVariable)
     {
         // wait until the dialog is finished before opening the input box
         waitingForInput = true;
@@ -235,8 +264,8 @@ public class DialogueManager : MonoBehaviour
         // wait until we enter an input (we do this because we can only get outVar here)
         yield return new WaitUntil(() => submitted == true);
 
-        // set the ink variable
-        currentStory.variablesState[outVar] = inputField.text;
+        // set the ink variable to the input
+        currentStory.variablesState[outputInkVariable] = inputField.text;
 
         inputUIElement.SetActive(false);
         submitted = false;
@@ -333,14 +362,17 @@ public class DialogueManager : MonoBehaviour
     }
 
     private void PlayTypingSound()
-    { 
-        if (currentCharacter != null) {
+    {
+        if (currentCharacter != null)
+        {
             if (currentCharacter.characterTypingSounds.Length > 0)
                 soundManager.PlayRandomClip(currentCharacter.characterTypingSounds);
-        } else if (defaultTypingClip != null) {
+        }
+        else if (defaultTypingClip != null)
+        {
             soundManager.PlayClip(defaultTypingClip);
         }
-            
+
     }
 
     IEnumerator ContinueToNextLine()

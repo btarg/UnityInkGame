@@ -36,7 +36,7 @@ public static class SaveManager
     public static void Save(SaveObject so)
     {
         if (!DirectoryExists())
-            Directory.CreateDirectory(Application.persistentDataPath + "/" + directory);
+            Directory.CreateDirectory(GetDirectory());
 
         // convert to json
         string json = JsonUtility.ToJson(so);
@@ -86,10 +86,14 @@ public static class SaveManager
     }
     private static bool DirectoryExists()
     {
-        return Directory.Exists(Application.persistentDataPath + "/" + directory);
+        return Directory.Exists(GetDirectory());
     }
     public static string GetFullPath()
     {
-        return Application.persistentDataPath + "/" + directory + "/" + filename;
+        return Path.Combine(GetDirectory(), filename);
+    }
+    public static string GetDirectory()
+    {
+        return Path.Combine(Application.persistentDataPath, directory);
     }
 }
