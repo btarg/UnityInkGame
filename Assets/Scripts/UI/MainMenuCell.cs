@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class CellImage : MonoBehaviour
+public class MainMenuCell : MonoBehaviour
 {
     public int saveSlot = 0;
     public Button loadButton;

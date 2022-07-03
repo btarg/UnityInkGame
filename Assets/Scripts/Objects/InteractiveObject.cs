@@ -44,6 +44,11 @@ public class InteractiveObject : MonoBehaviour
         {
 
             string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
+
+            if (itemPickup.amount > 1) {
+                colouredName += String.Format(" (x{0})", itemPickup.amount.ToString());
+            }
+            
             string interactMessage = "Look at ";
             switch (interactionType)
             {

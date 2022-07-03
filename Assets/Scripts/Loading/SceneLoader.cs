@@ -26,8 +26,9 @@ public class SceneLoader : MonoBehaviour
         return instance;
     }
 
-    public void QuickLoad() {
-        int saveSlot = PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0);
+    public void QuickLoad()
+    {
+        int saveSlot = SaveManager.GetSaveSlot();
         LoadFromFile(saveSlot);
     }
 
@@ -35,10 +36,8 @@ public class SceneLoader : MonoBehaviour
     {
         currentSave = SaveManager.Load(saveSlot);
 
-        // Default to loading a new game if there is no save present
         if (currentSave == null)
         {
-            SceneManager.LoadScene("TestLevel");
             return;
         }
 
@@ -50,8 +49,8 @@ public class SceneLoader : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Make sure we only run this stuff when loading the saved scene
-        if (currentSave == null || scene.name != currentSave.currentScene)
+        // Make sure we only run this stuff when loading a playable scene
+        if (!SaveManager.SaveExists() || scene.name == "MainMenu")
             return;
 
         // Get the player already in the scene
@@ -63,7 +62,7 @@ public class SceneLoader : MonoBehaviour
         Quaternion savedRotation = Quaternion.Euler(currentSave.playerRotationEuler);
         Quaternion savedCameraRotation = Quaternion.Euler(currentSave.cameraRotationEuler);
 
-        Debug.Log("Saved location is " + savedPlayerPosition);
+        Debug.Log("Saved position is " + savedPlayerPosition);
         Debug.Log("Saved rotation is " + savedRotation);
         Debug.Log("Saved cam rotation is " + savedCameraRotation);
 
@@ -76,17 +75,7 @@ public class SceneLoader : MonoBehaviour
         InventoryObject inventoryObject = player.GetComponentInChildren<InventoryObject>();
 
         // Load the full inventory and the equipped item slot
-        inventoryObject.Container = currentSave.inventory;
-        inventoryObject.EquipSlot(currentSave.equippedSlot);
-        inventoryObject.pickedUpItems = currentSave.pickedUpItems;
-
-        // Remove previously collected items
-        foreach (string name in inventoryObject.pickedUpItems)
-        {
-            GameObject go = GameObject.Find(name);
-            if (go.CompareTag("ItemPickup"))
-                Destroy(go);
-        }
+        inventoryObject.Load();
 
     }
 

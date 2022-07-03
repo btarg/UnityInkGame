@@ -9,11 +9,11 @@ public class SaveHelper : MonoBehaviour
 {
     public static SaveObject currentSaveObject()
     {
-        return SaveManager.Load(PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0));
+        return SaveManager.Load(SaveManager.GetSaveSlot());
     }
     public static Texture2D currentSaveScreenshot()
     {
-        return getSaveScreenshot(PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0));
+        return getSaveScreenshot(SaveManager.GetSaveSlot());
     }
 
     public static Texture2D getSaveScreenshot(int slot)

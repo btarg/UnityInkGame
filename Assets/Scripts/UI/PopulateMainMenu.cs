@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class PopulateScrollRect : MonoBehaviour
+public class PopulateMainMenu : MonoBehaviour
 {
     public GameObject cellPrefab;
     public List<GameObject> instantiatedCells;
@@ -15,7 +15,7 @@ public class PopulateScrollRect : MonoBehaviour
         for (int i = 0; i < numSaveSlots; i++)
         {
             GameObject cell = Instantiate(cellPrefab, gameObject.transform);
-            CellImage cellScript = cell.GetComponent<CellImage>();
+            MainMenuCell cellScript = cell.GetComponent<MainMenuCell>();
 
             // Select the first cell
             if (i == 0 && !EventSystem.current.alreadySelecting) {

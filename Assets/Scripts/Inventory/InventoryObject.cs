@@ -7,6 +7,10 @@ public class InventoryObject : MonoBehaviour
     private InventorySlot equippedSlot;
     public List<string> pickedUpItems;
 
+    private void Awake() {
+        pickedUpItems = new List<string>();
+    }
+
     public void AddItem(InventoryItem _item, int _amount)
     {
         for (int i = 0; i < Container.Items.Length; i++)
@@ -82,16 +86,26 @@ public class InventoryObject : MonoBehaviour
     public void Load()
     {
         SaveObject so = SaveHelper.currentSaveObject();
+
+        if (so == null) {
+            return;
+        }
+
+        pickedUpItems = so.pickedUpItems;
+
         Inventory newContainer = so.inventory;
         for (int i = 0; i < Container.Items.Length; i++)
         {
             Container.Items[i].UpdateSlot(newContainer.Items[i].ID, newContainer.Items[i].item, newContainer.Items[i].amount);
         }
+        EquipSlot(so.equippedSlot);
+
     }
     [ContextMenu("Clear")]
     public void Clear()
     {
         Container = new Inventory();
+        equippedSlot = null;
     }
 }
 [System.Serializable]

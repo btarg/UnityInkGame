@@ -9,15 +9,15 @@ public static class SaveManager
     public static string filename;
     static int saveSlot;
 
-    static SaveManager() {
-        saveSlot = PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0);
-        filename = "Save" + saveSlot.ToString();
-    }
-
     // Used to update what slot we are on
     public static void SetSaveSlot(int slot) {
         saveSlot = slot;
         filename = "Save" + saveSlot.ToString();
+        PlayerPrefs.SetInt("CURRENT_SAVE_SLOT", saveSlot);
+    }
+
+    public static int GetSaveSlot() {
+        return PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0);
     }
 
     public static void Delete(int slot) {
@@ -63,6 +63,7 @@ public static class SaveManager
             {
                 // Load from JSON file
                 string fileContents = File.ReadAllText(GetFullPath() + ".json");
+                Debug.LogWarning(fileContents);
                 SaveObject so = JsonUtility.FromJson<SaveObject>(fileContents);
 
                 Debug.Log("Loaded save file from " + DateTime.FromFileTime(so.timestamp));
@@ -71,12 +72,12 @@ public static class SaveManager
             }
             catch (Exception)
             {
-                Debug.Log("Failed to load save file");
+                Debug.LogWarning("Failed to load save file");
             }
         }
         else
         {
-            Debug.Log("Save file not found!");
+            Debug.LogWarning("Save file not found!");
         }
         return null;
     }

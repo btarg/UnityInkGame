@@ -32,11 +32,11 @@ public class MainMenu : MonoBehaviour
         controls.UI.Cancel.performed -= OnCancelPressed;
     }
 
-    public void SelectCell(CellImage cell)
+    public void SelectCell(MainMenuCell cell)
     {
         saveOptionsUI.SetActive(true);
 
-        foreach (CellImage c in FindObjectsOfType<CellImage>())
+        foreach (MainMenuCell c in FindObjectsOfType<MainMenuCell>())
         {
             c.loadButton.enabled = false;
         }
@@ -79,7 +79,7 @@ public class MainMenu : MonoBehaviour
 
     }
 
-    void DeleteFile(CellImage cell)
+    void DeleteFile(MainMenuCell cell)
     {
         TextMeshProUGUI deleteText = deleteButton.GetComponentInChildren<TextMeshProUGUI>();
         ColourOnHover colourOnHover = deleteButton.gameObject.GetComponentInChildren<ColourOnHover>();
@@ -142,13 +142,13 @@ public class MainMenu : MonoBehaviour
     {
         saveOptionsUI.SetActive(false);
 
-        foreach (CellImage c in FindObjectsOfType<CellImage>())
+        foreach (MainMenuCell c in FindObjectsOfType<MainMenuCell>())
         {
             c.loadButton.enabled = true;
             c.gameObject.GetComponent<MainMenuHighlight>().UnHighlight();
         }
 
-        PopulateScrollRect populator = gameObject.GetComponentInChildren<PopulateScrollRect>();
+        PopulateMainMenu populator = gameObject.GetComponentInChildren<PopulateMainMenu>();
 
         GameObject firstFile = populator.instantiatedCells.ToArray()[0];
         EventSystem.current.SetSelectedGameObject(null);
@@ -167,7 +167,7 @@ public class MainMenu : MonoBehaviour
 
     public void LoadButton()
     {
-        SceneLoader.GetInstance().LoadFromFile(PlayerPrefs.GetInt("CURRENT_SAVE_SLOT", 0));
+        SceneLoader.GetInstance().LoadFromFile(SaveManager.GetSaveSlot());
     }
 
 }

@@ -7,19 +7,22 @@ public class ItemPickup : MonoBehaviour
     public int amount = 1;
     public bool canPickup = true;
     public bool destroyOnPickup = true;
+    
+    GameObject player;
+    InventoryObject inventoryObject;
 
-    private void Start()
+    private void Awake()
     {
         // Check if this pickup has already been collected
-        SaveObject saveObject = SaveHelper.currentSaveObject() ?? null;
-        if (saveObject == null)
-        {
-            return;
+        player = GameObject.FindGameObjectWithTag("Player");
+        inventoryObject = player.GetComponentInChildren<InventoryObject>();
+
+        // Try loading if the list is empty to start with
+        if (inventoryObject.pickedUpItems.Count < 1) {
+            inventoryObject.Load();
         }
-        List<string> pickedUp = saveObject.pickedUpItems;
-
-
-        pickedUp.ForEach(delegate (string name)
+        
+        foreach (string name in inventoryObject.pickedUpItems)
         {
             if (name == gameObject.name)
             {
@@ -30,7 +33,7 @@ public class ItemPickup : MonoBehaviour
                 }
                 return;
             }
-        });
+        }
 
     }
 
@@ -40,12 +43,15 @@ public class ItemPickup : MonoBehaviour
             return;
 
         Debug.Log("Giving player item: " + item);
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        InventoryObject inventoryObject = playerObject.GetComponent<InventoryObject>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        inventoryObject = player.GetComponentInChildren<InventoryObject>();
         inventoryObject.AddItem(item, amount);
 
         // Add to save file to be destroyed when loaded
-        inventoryObject.pickedUpItems.Add(gameObject.name);
+        if (!inventoryObject.pickedUpItems.Contains(gameObject.name)) {
+            inventoryObject.pickedUpItems.Add(gameObject.name);
+        }
+
         canPickup = false;
 
         if (destroyOnPickup)
