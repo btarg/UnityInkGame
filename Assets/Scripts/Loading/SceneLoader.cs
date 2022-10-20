@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class SceneLoader : MonoBehaviour
     SaveObject currentSave;
 
     private static SceneLoader instance;
+    public UnityEvent onSceneLoaded;
 
     private void Awake()
     {
@@ -76,6 +78,9 @@ public class SceneLoader : MonoBehaviour
 
         // Load the full inventory and the equipped item slot
         inventoryObject.Load();
+
+        StatusConsole.Clear();
+        onSceneLoaded.Invoke();
 
     }
 

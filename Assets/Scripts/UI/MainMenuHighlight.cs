@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class MainMenuHighlight : MonoBehaviour
 {
-    public Image[] images;
+    public RawImage[] images;
     bool highlighted = false;
 
     private void Start()
@@ -19,7 +19,7 @@ public class MainMenuHighlight : MonoBehaviour
             return;
         }
 
-        foreach (Image img in images)
+        foreach (RawImage img in images)
         {
             img.color = new Color32(128, 128, 128, 255);
         }
@@ -32,7 +32,7 @@ public class MainMenuHighlight : MonoBehaviour
             return;
         }
 
-        foreach (Image img in images)
+        foreach (RawImage img in images)
         {
             img.color = Color.white;
         }
@@ -47,7 +47,7 @@ public class MainMenuHighlight : MonoBehaviour
             others.highlighted = true;
         }
 
-        foreach (Image img in images)
+        foreach (RawImage img in images)
         {
             img.color = Color.yellow;
         }

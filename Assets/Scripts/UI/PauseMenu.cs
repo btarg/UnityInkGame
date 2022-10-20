@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using TMPro;
-using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -15,12 +14,14 @@ public class PauseMenu : MonoBehaviour
     public static bool GameIsPaused = false;
     public static bool PauseMenuOpen = false;
     public static bool canPause = true;
-    GameObject pauseMenuUI;
+
+    public UnityEvent onPause;
+    public UnityEvent onUnpause;
+
     GameObject playerObject;
     [SerializeField] GameObject firstButtonSelected;
     [SerializeField] TextMeshProUGUI saveDetailsText;
 
-    public List<GameObject> objects;
     private Canvas disableCanvas;
 
     public UnityEvent onSaved;
@@ -31,31 +32,35 @@ public class PauseMenu : MonoBehaviour
 
     SaveHelper helper;
 
-    private void Awake() {
-        helper = gameObject.AddComponent<SaveHelper>();
-    }
-
     // Make sure the game isn't paused on startup
     void Start()
     {
-        pauseMenuUI = getPauseMenuUI();
-        pauseMenuUI.SetActive(false);
+        helper = gameObject.AddComponent<SaveHelper>();
+        // pauseMenuUI = getPauseMenuUI();
+        // pauseMenuUI.SetActive(false);
+
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
-
-        // Use new input system
-        controls = new PlayerControls();
-        controls.Enable();
-        controls.UI.PauseMenu.performed += HandlePause;
-
+    
         loader = SceneLoader.GetInstance();
 
         playerObject = GameObject.FindGameObjectWithTag("Player");
         kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
 
-        Resume();
+        OnEnable();
+        onUnpause.Invoke();
     }
 
+    private void OnEnable() {
+
+        // Use new input system
+        if (controls == null)
+            controls = new PlayerControls();
+
+        controls.Enable();
+        controls.UI.PauseMenu.performed += HandlePause;
+    }
     private void OnDisable() {
+        controls.Disable();
         controls.UI.PauseMenu.performed -= HandlePause;
     }
 
@@ -79,44 +84,42 @@ public class PauseMenu : MonoBehaviour
         if (!canPause || DialogueManager.GetInstance().dialogueIsPlaying || InventoryUIManager.inventoryIsOpen)
             return;
 
-        disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
-        playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
-
-        pauseMenuUI = getPauseMenuUI();
-
-        if (pauseMenuUI == null) {
-            return;
-        }
-
         if (GameIsPaused)
         {
-            Debug.Log("Game Resumed");
-            Resume();
+            onUnpause.Invoke();
         }
         else
         {
-            Debug.Log("Game Paused");
-            StopTime();
-            OpenPauseMenu();
+            onPause.Invoke();
         }
+    }
+
+    public void PauseGame() {
+        StopTime();
+        OpenPauseMenu();
+        Debug.Log("Game Paused");
     }
 
     public void Resume()
     {
+        disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+
         // Resume Game
         EventSystem.current.SetSelectedGameObject(null);
 
-        pauseMenuUI.SetActive(false);
+        // pauseMenuUI.SetActive(false);
+
         Time.timeScale = 1f;
         GameIsPaused = false;
         PauseMenuOpen = false;
 
-        // Enable all objects in list
-        EnableAll();
+        if (kinematicPlayer != null)
+            kinematicPlayer.canMove = couldMove;
 
-        kinematicPlayer.canMove = couldMove;
         disableCanvas.enabled = true;
+        Debug.Log("Game Resumed");
 
     }
 
@@ -138,51 +141,22 @@ public class PauseMenu : MonoBehaviour
         PauseMenuOpen = true;
 
         // Pause Game
-        pauseMenuUI.SetActive(true);
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(firstButtonSelected);
-
-        SaveObject currentSave = SaveHelper.currentSaveObject();
-
-        // Display timestamp or "never"
-        string lastSave = "Never";
-        if (currentSave != null)
-        {
-            lastSave = DateTime.FromFileTime(currentSave.timestamp).ToString();
-        }
-
-        saveDetailsText.text = "Last save:<br><color=yellow>" + lastSave + "</color>";
-
-        // Enable all buttons (we disable the save button after click to prevent spamming)
-        foreach (Button b in pauseMenuUI.GetComponentsInChildren<Button>())
-        {
-            b.enabled = true;
-        }
     }
 
     public void StopTime()
     {
+        disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+
         Time.timeScale = 0f;
         GameIsPaused = true;
 
         couldMove = kinematicPlayer.canMove;
         kinematicPlayer.canMove = false;
         disableCanvas.enabled = false;
-
-        // Disable all objects in list
-        DisableAll();
-    }
-
-    public void EnableAll()
-    {
-        foreach (var obj in objects)
-            obj.SetActive(true);
-    }
-
-    public void DisableAll()
-    {
-        foreach (var obj in objects)
-            obj.SetActive(false);
     }
 
     public void MenuButton()

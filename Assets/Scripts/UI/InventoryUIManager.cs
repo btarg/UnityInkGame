@@ -4,12 +4,15 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(PauseMenu))]
 public class InventoryUIManager : MonoBehaviour
 {
+    public UnityEvent onOpenInventory;
+    public UnityEvent onCloseInventory;
+
     GameObject inventoryUIElement;
-    PauseMenu pauseMenu;
     PlayerControls playerControls;
     public static bool inventoryIsOpen = false;
 
@@ -17,35 +20,35 @@ public class InventoryUIManager : MonoBehaviour
     InventoryObject inventoryObject;
 
     [Header("Buttons")]
-    [SerializeField] GameObject[] choices;
+    private Button[] choices = null;
     private TextMeshProUGUI[] choicesText;
 
     // Start is called before the first frame update
     void Start()
     {
-        playerControls = new PlayerControls();
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        
+        OnEnable();
+        onCloseInventory.Invoke();
+        
+    }
+
+    private void OnEnable() {
+
+        if (playerControls == null)
+            playerControls = new PlayerControls();
+
         playerControls.Enable();
         playerControls.UI.Inventory.performed += InventoryButtonPressed;
         playerControls.UI.PauseMenu.performed += CloseButtonPressed;
         playerControls.UI.Cancel.performed += CloseButtonPressed;
+    }
 
-        playerObject = GameObject.FindGameObjectWithTag("Player");
-
-        choicesText = new TextMeshProUGUI[choices.Length];
-        int index = 0;
-
-        // Get buttons text
-        foreach (GameObject choice in choices)
-        {
-            choicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
-            index++;
-        }
-
-        InitButtons();
-        inventoryUIElement = getInventoryUI();
-
-        if (inventoryUIElement != null)
-            inventoryUIElement.SetActive(false);
+    private void OnDisable() {
+        playerControls.Disable();
+        playerControls.UI.Inventory.performed -= InventoryButtonPressed;
+        playerControls.UI.PauseMenu.performed -= CloseButtonPressed;
+        playerControls.UI.Cancel.performed -= CloseButtonPressed;
     }
 
     void CloseButtonPressed(InputAction.CallbackContext context)
@@ -66,62 +69,66 @@ public class InventoryUIManager : MonoBehaviour
         if (PauseMenu.PauseMenuOpen || DialogueManager.GetInstance().dialogueIsPlaying)
             return;
 
-        inventoryUIElement = getInventoryUI();
-        if (inventoryUIElement == null)
-        {
-            return;
-        }
+        // inventoryUIElement = getInventoryUI();
+        // if (inventoryUIElement == null)
+        // {
+        //     return;
+        // }
 
         inventoryIsOpen = !inventoryIsOpen;
 
         if (inventoryIsOpen)
         {
-            inventoryUIElement.SetActive(true);
-            pauseMenu.StopTime();
+            // inventoryUIElement.SetActive(true);
+            
+            onOpenInventory.Invoke();
+            
+            
             ItemButtons();
             // default to selecting first option if there is no item equipped but there is atleast 1 option
-            if (!EventSystem.current.alreadySelecting && choices[0].activeInHierarchy)
+            if (!EventSystem.current.alreadySelecting && choices[0].gameObject.activeInHierarchy)
             {
-                EventSystem.current.SetSelectedGameObject(choices[0]);
+                EventSystem.current.SetSelectedGameObject(choices[0].gameObject);
             }
 
         }
         else
         {
-            inventoryUIElement.SetActive(false);
-            pauseMenu.Resume();
-
-            InitButtons();
+            // inventoryUIElement.SetActive(false);
+            
+            onCloseInventory.Invoke();
         }
-    }
-
-    public GameObject getInventoryUI()
-    {
-        // stupid hacky shit because GetChild sucks
-        foreach (Transform child in gameObject.transform)
-        {
-            if (child != null && child.gameObject.CompareTag("InventoryMenu"))
-            {
-                return child.gameObject;
-            }
-        }
-        return null;
     }
 
     void InitButtons()
     {
-        pauseMenu = gameObject.GetComponent<PauseMenu>();
-
         // hide all item buttons
-        foreach (GameObject choiceButton in choices)
+        foreach (Button choiceButton in choices)
         {
-            choiceButton.SetActive(false);
-            choiceButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
+            choiceButton.gameObject.SetActive(false);
+            choiceButton.onClick.RemoveAllListeners();
         }
     }
 
     void ItemButtons()
     {
+
+        if (choices == null) {
+            // Get choice buttons as children of the "InventoryButtons" object
+            choices = GameObject.FindGameObjectWithTag("InventoryButtons").GetComponentsInChildren<Button>();
+
+            choicesText = new TextMeshProUGUI[choices.Length];
+            int cindex = 0;
+            
+
+            // Get buttons text
+            foreach (Button choice in choices)
+            {
+                choicesText[cindex] = choice.gameObject.GetComponentInChildren<TextMeshProUGUI>();
+                cindex++;
+            }
+        }
+
         playerObject = GameObject.FindGameObjectWithTag("Player");
         inventoryObject = playerObject.GetComponent<InventoryObject>();
 
@@ -138,6 +145,7 @@ public class InventoryUIManager : MonoBehaviour
             }
 
             GameObject itemButton = choices[index].gameObject;
+            Debug.LogWarning(index);
 
             // show button with text
             itemButton.SetActive(true);
@@ -146,7 +154,7 @@ public class InventoryUIManager : MonoBehaviour
             if (inventoryObject.isEquipped(slot))
             {
                 EventSystem.current.SetSelectedGameObject(itemButton);
-                prefix = "* ";
+                prefix = "<color=red>*</color> ";
             }
 
             choicesText[index].text = String.Format("{0}{1} (x{2})", prefix, slot.item.displayName, slot.amount.ToString());

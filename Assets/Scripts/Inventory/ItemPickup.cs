@@ -5,6 +5,7 @@ public class ItemPickup : MonoBehaviour
 {
     public InventoryItem item;
     public int amount = 1;
+    public int takeAmount = 1;
     public bool canPickup = true;
     public bool destroyOnPickup = true;
     
@@ -39,24 +40,35 @@ public class ItemPickup : MonoBehaviour
 
     public void GivePlayerItem()
     {
-        if (!canPickup || amount == 0)
+        if (!canPickup || amount < 1) {
+            StatusConsole.PrintToConsole("You cannot take this item.");
             return;
+        }
+            
 
         Debug.Log("Giving player item: " + item);
         player = GameObject.FindGameObjectWithTag("Player");
         inventoryObject = player.GetComponentInChildren<InventoryObject>();
-        inventoryObject.AddItem(item, amount);
 
+        if (destroyOnPickup) {
+            inventoryObject.AddItem(item, amount);
+        } else {
+            inventoryObject.AddItem(item, takeAmount);
+        }
         // Add to save file to be destroyed when loaded
         if (!inventoryObject.pickedUpItems.Contains(gameObject.name)) {
             inventoryObject.pickedUpItems.Add(gameObject.name);
         }
 
-        canPickup = false;
 
         if (destroyOnPickup)
         {
             Destroy(gameObject);
+        } else {
+            amount = amount - takeAmount;
+
+            if (amount == 0)
+                canPickup = false;
         }
     }
 }

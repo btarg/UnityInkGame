@@ -10,10 +10,12 @@ public class FirstPersonPlayer : MonoBehaviour
     public Camera fpsCam;
     [SerializeField] GameObject interactPrompt;
 
-    [Header("Sprites")]
-    [SerializeField] Sprite genericInteractionCrosshair;
-    [SerializeField] Sprite talkInteractionCrosshair;
-    [SerializeField] Sprite pickupInteractionCrosshair;
+    [Header("Texture2Ds")]
+    [SerializeField] Texture2D genericInteractionCrosshair;
+    [SerializeField] Texture2D talkInteractionCrosshair;
+    [SerializeField] Texture2D pickupInteractionCrosshair;
+    [SerializeField] Texture2D goToInteractionCrosshair;
+    [SerializeField] Texture2D itemRequiredInteractionCrosshair;
 
     PlayerControls controls;
     bool isPressingInteract;
@@ -60,14 +62,21 @@ public class FirstPersonPlayer : MonoBehaviour
                 switch (interactive.interactionType)
                 {
                     case InteractiveObject.InteractionType.Generic:
-                        interactPrompt.GetComponentInChildren<Image>().sprite = genericInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<RawImage>().texture = genericInteractionCrosshair;
                         break;
                     case InteractiveObject.InteractionType.Talk:
-                        interactPrompt.GetComponentInChildren<Image>().sprite = talkInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<RawImage>().texture = talkInteractionCrosshair;
                         break;
                     case InteractiveObject.InteractionType.Pickup:
-                        interactPrompt.GetComponentInChildren<Image>().sprite = pickupInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<RawImage>().texture = pickupInteractionCrosshair;
                         break;
+                    case InteractiveObject.InteractionType.GoTo:
+                        interactPrompt.GetComponentInChildren<RawImage>().texture = goToInteractionCrosshair;
+                        break;
+
+                     case InteractiveObject.InteractionType.ItemRequired:
+                        interactPrompt.GetComponentInChildren<RawImage>().texture = itemRequiredInteractionCrosshair;
+                        break;   
                 }
 
                 string interactString = "[" + controls.FirstPerson.Interact.GetBindingDisplayString() + "] <br>";

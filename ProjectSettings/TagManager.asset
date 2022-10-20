@@ -8,6 +8,8 @@ TagManager:
   - PauseMenu
   - InventoryMenu
   - NPC
+  - InventoryButtons
+  - StatusConsole
   layers:
   - Default
   - TransparentFX

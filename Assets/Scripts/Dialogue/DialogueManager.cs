@@ -22,7 +22,6 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private GameObject continueIcon;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private TextMeshProUGUI displayNameText;
-    [SerializeField] private Animator portraitAnimator;
 
     [Header("Choices UI")]
     [SerializeField] private GameObject choicesUIElement;
@@ -52,7 +51,6 @@ public class DialogueManager : MonoBehaviour
     private static DialogueManager instance;
 
     private const string SPEAKER_TAG = "speaker";
-    private const string PORTRAIT_TAG = "portrait";
     private const string SPEED_TAG = "delay";
     private const string AUTO_TAG = "continueafter";
     private const string INPUT_TAG = "input";
@@ -149,11 +147,10 @@ public class DialogueManager : MonoBehaviour
 
         dialogueVariables.StartListening(currentStory);
 
-        // reset portrait, layout, and speaker
+        // reset layout, and speaker
         // remove the name tag by default
         displayNameText.transform.parent.gameObject.SetActive(false);
         displayNameText.text = "???";
-        portraitAnimator.Play("default");
         currentCharacter = null;
 
         // add functions to ink
@@ -440,9 +437,6 @@ public class DialogueManager : MonoBehaviour
                         displayNameText.text = currentCharacter.characterName;
                     }
 
-                    break;
-                case PORTRAIT_TAG:
-                    portraitAnimator.Play(tagValue);
                     break;
                 case SPEED_TAG:
                     // NEW typing speed tag

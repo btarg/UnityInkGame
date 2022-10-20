@@ -63,7 +63,6 @@ public static class SaveManager
             {
                 // Load from JSON file
                 string fileContents = File.ReadAllText(GetFullPath() + ".json");
-                Debug.LogWarning(fileContents);
                 SaveObject so = JsonUtility.FromJson<SaveObject>(fileContents);
 
                 Debug.Log("Loaded save file from " + DateTime.FromFileTime(so.timestamp));
