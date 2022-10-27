@@ -27,7 +27,7 @@ public class PauseMenu : MonoBehaviour
     public UnityEvent onSaved;
     PlayerControls controls;
 
-    KinematicPlayer kinematicPlayer;
+    UBSPEntities.UBSPPlayer kinematicPlayer;
     bool couldMove = true;
 
     SaveHelper helper;
@@ -40,17 +40,18 @@ public class PauseMenu : MonoBehaviour
         // pauseMenuUI.SetActive(false);
 
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
-    
+
         loader = SceneLoader.GetInstance();
 
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+        kinematicPlayer = playerObject.GetComponent<UBSPEntities.UBSPPlayer>();
 
         OnEnable();
         onUnpause.Invoke();
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
 
         // Use new input system
         if (controls == null)
@@ -59,7 +60,8 @@ public class PauseMenu : MonoBehaviour
         controls.Enable();
         controls.UI.PauseMenu.performed += HandlePause;
     }
-    private void OnDisable() {
+    private void OnDisable()
+    {
         controls.Disable();
         controls.UI.PauseMenu.performed -= HandlePause;
     }
@@ -94,7 +96,8 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    public void PauseGame() {
+    public void PauseGame()
+    {
         StopTime();
         OpenPauseMenu();
         Debug.Log("Game Paused");
@@ -104,7 +107,7 @@ public class PauseMenu : MonoBehaviour
     {
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+        kinematicPlayer = playerObject.GetComponent<UBSPEntities.UBSPPlayer>();
 
         // Resume Game
         EventSystem.current.SetSelectedGameObject(null);
@@ -149,34 +152,40 @@ public class PauseMenu : MonoBehaviour
     {
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<KinematicPlayer>();
+        kinematicPlayer = playerObject.GetComponent<UBSPEntities.UBSPPlayer>();
 
         Time.timeScale = 0f;
-        GameIsPaused = true;
+        FreezePlayer();
 
+        disableCanvas.enabled = false;
+    }
+
+    public void FreezePlayer()
+    {
         couldMove = kinematicPlayer.canMove;
         kinematicPlayer.canMove = false;
-        disableCanvas.enabled = false;
+        GameIsPaused = true;
     }
 
     public void MenuButton()
     {
         helper.Save();
-        SceneManager.LoadScene("MainMenu");
+        LoadingScreen.GetInstance().LoadScene("MainMenu");
 
     }
 
     public void LoadButton()
     {
         loader.QuickLoad();
-        Resume();
+        onUnpause.Invoke();
+
     }
 
     public void SaveButton()
     {
         helper.Save();
 
-        Resume();
+        onUnpause.Invoke();
         onSaved.Invoke();
 
     }

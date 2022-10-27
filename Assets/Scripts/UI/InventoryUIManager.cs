@@ -145,7 +145,6 @@ public class InventoryUIManager : MonoBehaviour
             }
 
             GameObject itemButton = choices[index].gameObject;
-            Debug.LogWarning(index);
 
             // show button with text
             itemButton.SetActive(true);

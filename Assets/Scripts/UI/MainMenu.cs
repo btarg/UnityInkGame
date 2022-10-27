@@ -121,7 +121,7 @@ public class MainMenu : MonoBehaviour
     void StartNewGame()
     {
         Debug.LogWarning("STARTING NEW GAME!");
-        SceneManager.LoadScene("TestLevel");
+        LoadingScreen.GetInstance().LoadScene("TestLevel");
     }
 
     void TryLoadingScene(int saveSlot)
@@ -168,6 +168,9 @@ public class MainMenu : MonoBehaviour
     public void LoadButton()
     {
         SceneLoader.GetInstance().LoadFromFile(SaveManager.GetSaveSlot());
+
+        // stop rendering main menu
+       gameObject.GetComponent<Canvas>().enabled = false;
     }
 
 }

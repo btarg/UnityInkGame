@@ -33,6 +33,11 @@ public class FirstPersonPlayer : MonoBehaviour
 
     }
 
+    private void Awake() {
+        if (interactPrompt == null) {
+            interactPrompt = GameObject.FindGameObjectWithTag("InteractPrompt");
+        }
+    }
 
     void OnInteract(InputAction.CallbackContext context)
     {

@@ -1,0 +1,7 @@
+﻿Assets/Q3Project
+Assets/UBSPMapTools/MapContent/Materials
+Assets/UBSPMapTools/MapContent/Models
+Assets/UBSPMapTools/MapContent/Sound
+Assets/ModelPrefabs
+3000
+0.02

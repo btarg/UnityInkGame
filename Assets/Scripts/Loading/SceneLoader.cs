@@ -45,7 +45,8 @@ public class SceneLoader : MonoBehaviour
 
         string sceneName = currentSave.currentScene;
         Debug.Log("Loading Saved Scene: " + sceneName);
-        SceneManager.LoadScene(sceneName);
+
+        LoadingScreen.GetInstance().LoadScene(sceneName);
 
     }
 
@@ -57,6 +58,11 @@ public class SceneLoader : MonoBehaviour
 
         // Get the player already in the scene
         player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null) {
+            return;
+        }
+
 
         Vector3 savedPlayerPosition = currentSave.playerPosition;
 

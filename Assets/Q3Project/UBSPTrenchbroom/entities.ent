@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<classes>
+
+<point name="info_player_start" color="0.3 0.3 1" box="-14 -14 -36 14 14 36">
+<angles key="angles" name="Pitch Yaw Roll">Pitch, yaw and roll angles of sight direction.</angles>
+</point>
+
+<list name="Collision">
+  <item name="None" value="0"/>
+  <item name="Mesh" value="1"/>
+  <item name="Box" value="2"/>
+</list>
+
+<list name="Axis">
+  <item name="X" value="0"/>
+  <item name="Y" value="1"/>
+  <item name="Z" value="2"/>
+</list>
+
+<list name="DoorState">
+  <item name="Closed" value="0"/>
+  <item name="OpenCW" value="1"/>
+  <item name="OpenCCW" value="2"/>
+</list>
+
+<group name="brush_model" color="0 0.4 1">Brush Model.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<real key="smoothing" name="Smooth Angle" value="30">Smooth Angle.</real>
+<Collision key="collision" name="Collision" value="1">Collision.
+0 : None
+1 : Mesh
+2 : Box
+</Collision>
+<flag key="STATIC" name="Static" bit="0">Static.</flag>
+<flag key="MASTER" name="Master" bit="1">Master.</flag>
+<flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
+</group>
+
+<group name="brush_trigger" color="0 0.4 1">Brush Model.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="targetin" name="Entry Target">Entry Target.</target>
+<target key="targetout" name="Exit Target">Exit Target.</target>
+<string key="restrict" name="Restrict Name">Restrict Name.</string>
+<flag key="Once" name="Once" bit="2">Remove after first entry.</flag>
+<flag key="Partial" name="Partial" bit="3">Name contains string.</flag>
+</group>
+
+<group name="brush_door_r" color="0 0.4 1">Rotating Door.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="target" name="Target">Output Target.</target>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<real key="smoothing" name="Smooth Angle" value="30">Smooth Angle.</real>
+<real key="speed" name="Speed" value="90">Speed.</real>
+<real key="angle" name="Angle" value="89">Angle.</real>
+<real key="delay" name="Delay" value="0">Close Delay.</real>
+<sound key="movesnd" name="Move Sound">Sound/name of .wav file to play.</sound>
+<sound key="closesnd" name="Close Sound">Sound/name of .wav file to play.</sound>
+<real key="volume" name="Sound Volume" value="0.8">Sound Volume.</real>
+<DoorState key="state" name="Door State" value="0">Door State.
+0 : Closed
+1 : OpenCW
+2 : OpenCCW
+</DoorState>
+<Collision key="collision" name="Collision" value="1">Collision.
+0 : None
+1 : Mesh
+2 : Box
+</Collision>
+<Axis key="axis" name="Axis" value="1">Axis.
+0 : X
+1 : Y
+2 : Z
+</Axis>
+<flag key="MASTER" name="Master" bit="1">Master.</flag>
+<flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
+<flag key="CCW" name="CCW" bit="3">Reverse.</flag>
+<flag key="AUTODIR" name="AUTODIR" bit="4">Open from player.</flag>
+</group>
+
+<group name="brush_door_s" color="0 0.4 1">Sliding Door.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="target" name="Target">Output Target.</target>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<real key="smoothing" name="Smooth Angle" value="30">Smooth Angle.</real>
+<Collision key="collision" name="Collision" value="1">Collision.
+0 : None
+1 : Mesh
+2 : Box
+</Collision>
+<Axis key="axis" name="Axis" value="1">Axis.
+0 : X
+1 : Y
+2 : Z
+</Axis>
+<real key="speed" name="Open Speed" value="90.0">Open Speed.</real>
+<real key="leap" name="Leap" value="0.01">Leap.</real>
+<flag key="MASTER" name="Master" bit="1">Master.</flag>
+<flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
+<flag key="START_OPEN" name="Instance" bit="3">Instance.</flag>
+<flag key="AUTODISTANCE" name="AutoDistance" bit="4">Auto Distance.</flag>
+<flag key="REVERSE" name="Reverse" bit="4">Reverse.</flag>
+</group>
+
+<group name="brush_rotating" color="0 0.4 1">Constant Rotating Object.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<real key="smoothing" name="Smooth Angle" value="30">Smooth Angle.</real>
+<real key="speed" name="Speed" value="30">Rotation Speed.</real>
+<Collision key="collision" name="Collision" value="1">Collision.
+0 : None
+1 : Mesh
+2 : Box
+</Collision>
+<Axis key="axis" name="Axis" value="1">Axis.
+0 : X
+1 : Y
+2 : Z
+</Axis>
+<sound key="sound" name="Sound">Sound/name of .wav file to play.</sound>
+<real key="volume" name="Sound Volume" value="1">Sound Volume.</real>
+<real key="range" name="Sound Range" value="10">Sound Range.</real>
+<real key="blend" name="Sound2Dto3D" value="1">Sound2Dto3D.</real>
+<flag key="MASTER" name="Master" bit="1">Master.</flag>
+<flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
+<flag key="START_OFF" name="Start Off" bit="2">Start Off.</flag>
+</group>
+
+<group name="brush_rigidbody" color="0 0.4 1">Rigid Body.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<real key="smoothing" name="Smooth Angle" value="30">Smooth Angle.</real>
+<real key="mass" name="Mass" value="5">Rigid Body Mass.</real>
+<Collision key="collision" name="Collision" value="1">Collision.
+0 : None
+1 : Mesh
+2 : Box
+</Collision>
+<flag key="MASTER" name="Master" bit="1">Master.</flag>
+<flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
+</group>
+
+<group name="brush_elevator" color="0 0.4 1">Elevator.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="target" name="Target">Output Target.</target>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<real key="smoothing" name="Smooth Angle" value="30">Smooth Angle.</real>
+<string key="points" name="Points">Points.</string>
+<Collision key="collision" name="Collision" value="1">Collision.
+0 : None
+1 : Mesh
+2 : Box
+</Collision>
+<flag key="MASTER" name="Master" bit="1">Master.</flag>
+<flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
+<flag key="DIRECT" name="DIRECT" bit="3">DIRECT.</flag>
+<flag key="AUTOPARENT" name="AUTOPARENT" bit="4">AUTOPARENT.</flag>
+
+</group>
+
+<point name="info_origin" color="0.3 1.0 0.3" box="-4 -4 -4 4 4 4">Info Origin.
+<target key="name" name="Object Name">Object Name.</target>
+</point>
+
+<list name="cmSize">
+  <item name="32" value="0"/>
+  <item name="64" value="1"/>
+  <item name="128" value="2"/>
+  <item name="256" value="3"/>
+  <item name="512" value="4"/>
+</list>
+
+<point name="env_cubemap" color="0.3 0.3 1.0" box="-8 -8 -8 8 8 8">Cubemap.
+<target key="name" name="Object Name">Object Name.</target>
+<cmSize key="resolution" name="Resolution" value="2">Cubemap size.
+0 : 32
+1 : 64
+2 : 128
+3 : 256
+4 : 512
+</cmSize>
+<flag key="HDR" name="HDR" bit="0">Static.</flag>
+</point>
+
+<point name="env_sound" color="0.7 0.9 0.2" box="-4 -4 -4 4 4 4">Env Sound.
+<target key="name" name="Object Name">Object Name.</target>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<sound key="wavname" name="Wav Name">Sound/name of .wav file to play.</sound>
+<real key="volume" name="Volume" value="1">Sound Volume.</real>
+<real key="blend" name="2D to 3D" value="1">2D to 3D blend.</real>
+<real key="range" name="Range" value="10">Range in Meters.</real>
+<flag key="START_ON" name="Start On" bit="0">Start On.</flag>
+<flag key="LOOP" name="Loop" bit="1">Loop.</flag>
+</point>
+
+<list name="lightMode">
+  <item name="Realtime" value="0"/>
+  <item name="Mixed" value="1"/>
+  <item name="Baked" value="2"/>
+</list>
+
+<point name="light_point" color="1.0 1.0 0.7" box="-2 -2 -2 2 2 2">Point Light.
+<target key="name" name="Object Name">Object Name.</target>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<color key="_color" name="Light Color" value="100 100 100">Color of light.</color>
+<real key="range" name="Range" value="10">Range.</real>
+<real key="intensity" name="Intensity" value="1">Intensity.</real>
+<lightMode key="mode" name="Mode" value="0">Light Mode.
+0 : Realtime
+1 : Mixed
+2 : Baked
+</lightMode>
+</point>
+
+<point name="model" color="1 .5 .25" box="-8 -8 -8 8 8 8" model="{ path : model }">
+<string key="name" name="Object Name">Object Name.</string>
+<target key="parent" name="Object Parent">Object Parent.</target>
+<target key="cubemap" name="Object Cubemap">Object Cubemap.</target>
+<real key="lm_scale" name="Lightmap Scale" value="1">Lightmap Scale.</real>
+<integer key="collision" name="Collision" value="1">0 - None, 1 - Prefab, 2 - Mesh, 3 - Box, 4 - Sphere.</integer>
+<model key="model" name="Model File">models/model_name.</model>
+<flag key="STATIC" name="Static" bit="0">Static.</flag>
+</point>
+
+<point name="info_transform" color="0.2 1.0 1.0" box="-4 -4 -4 4 4 4">Transform.
+<target key="name" name="Object Name">Object Name.</target>
+</point>
+
+<group name="worldspawn" color="0 0 0">
+Entity, which stores regular static map primitives (brushes and patches).
+-------- KEYS --------
+<string key="message" name="Logon Message">Text to print at user logon. Used for name of level.</string>
+<sound key="music" name="Music File">Path/name of looping .wav file used for level's music (e.g. music/sonic5.wav).</sound>
+<real key="gravity" name="Gravity" value="800">Gravity of level (default normal gravity: 800).</real>
+-------- Q3MAP2 KEYS --------
+<integer key="gridsize" name="Dynamic Light Granularity" value="64 64 128">Granularity of the lightgrid, created by q3map, which is used to dynamically light certain game objects, like players and items. Value is three integers separated by spaces, representing number of units between grid points in X Y Z. Default gridsize value is 64 64 128. Use larger powers of 2 to reduce BSP size and compile time on very large maps.</integer>
+<integer key="_blocksize" name="BSP Block Size" value="1024 1024 1024">Map compiler splits the BSP tree along axial planes (X, Y and Z) for optimization. It does it as often, as specified in _blocksize key for respective axis (in units) (default 1024 1024 1024, 0 = disable, setting single value 'N' equals to setting 'N N N'). I.e. lower values result in more splits and vice versa. Increase the blocksize using larger powers of 2 to reduce compile times on very large maps with a low structural brush density. Maps, having flat architecture, might work better with horizontal splits disabled ('N N 0').</integer>
+<real key="_ambient" name="Ambient Intensity" value="0">Adds a constant value to overall lighting (default 0, range 0 - 255). Only recommended use is small values for cosmetic purposes, as high values will have a tendency to flatten out variations in light and shade.</real>
+<color key="_color" name="Ambient Color" value="1 1 1">RGB color value for ambient and other global light parameters (default is 1 1 1).</color>
+<real key="_minlight" name="Min Lightmap Intensity" value="0">Minimum light value, levelwide. Uses the _color key to set color. Since it does not add unlike ambient, but overrides existing light values, affected areas will get flat constant light. Therefore use is highly not recommended!</real>
+<real key="_minvertexlight" name="Min Vertex Intensity" value="0">Minimum vertex lighting, levelwide.</real>
+<real key="_mingridlight" name="Min Dynamic Intensity" value="0">Minimum lightgrid (dynamic entity lighting) levelwide.</real>
+<boolean key="_keeplights" name="Keep Light Entities">Keep light entities in the BSP. Normally stripped out by the BSP process and read from the .map file by the lighting phase.</boolean>
+<boolean key="_noshadersun" name="Ignore Shader Sun">Ignore q3map_sun/sun directives in sky shaders and ONLY use entity sun lights.</boolean>
+<real key="_farplanedist" name="Far Clip Distance">Limit on how many units the vis phase of compilation can see. Used in combination with level-wide fog, it can help reduce r_speeds on large, open maps.</real>
+<texture key="_foghull" name="Fog Hull Shader">Shader to use for "fog hull". Foghull shader should be a sky shader. Omit the "textures/" prefix.</texture>
+<real key="_lightmapscale" name="Lightmap Scale" value="1">Floating point value, scaling the resolution of lightmaps on brushes/patches in the world. Can be overridden in func_group (or other entities) (default 1.0).</real>
+<integer key="_castshadows" name="Shadow Caster Level" value="1">Allows per-entity control over shadow casting. Defaults to 0 on entities, 1 on world. 0 = no shadow casting. 1 = cast shadows on world. &gt; 1 = cast shadows on entities with _rs (or _receiveshadows) with the corresponding value, AND world. Negative values imply same, but DO NOT cast shadows on world.</integer>
+<integer key="_receiveshadows" name="Shadow Receiver Level" value="1">Allows per-entity control over shadow reception. Defaults to 1 on everything (world shadows). 0 = receives NO shadows. &gt; 1 = receive shadows only from corresponding keyed entities (see above) and world. &lt; 1 = receive shadows ONLY from corresponding keyed entities.</integer>
+<texture key="_celshader" name="Cel Shader">Sets the cel shader used for this geometry. Note: Omit the "textures/" prefix.</texture> Overridable in entities.
+<string key="_styleNalphaGen" name="Style Light alphaGen">*IMPORTANT* Replace "N" in the key "_styleNalphaGen" with an integer between 1 and 31 as your style index. Values takes standard shader waveform functions (e.g. wave sin 0.5 0.3 0.25 1.5)</string>
+<string key="_styleNrgbGen" name="Style Light rgbGen">*IMPORTANT* Replace "N" in the key "_styleNrgbGen" with an integer between 1 and 31 as your style index. Values take standard shader waveform functions (e.g. wave sin 0.5 0.3 0.25 1.5)</string>
+-------- Q3MAP2 TERRAIN KEYS --------
+<texture key="_indexmap" name="Terrain Blending Map">Path/name for the art file used to guide the mapping of textures on the terrain surface.</texture>
+<integer key="_layers" name="Terrain Layers">Number of unique root shaders that will be used on the terrain.</integer>
+<texture key="_shader" name="Terrain MetaShader">Path to the metashader used to assign textures to the terrain entity. Note: Omit the "textures/" prefix.</texture>
+</group>
+</classes>

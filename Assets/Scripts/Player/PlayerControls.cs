@@ -40,7 +40,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""name"": ""Camera"",
                     ""type"": ""Value"",
                     ""id"": ""e2f1a720-ad28-45ca-9c0e-0c6a4aaa7e37"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Analog"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -58,6 +58,33 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""8a70ee3c-c91e-4d7f-bec1-8c387055a330"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sprint"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""ed44863a-ccd7-4e0e-b940-22308ad1ca24"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Crouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""003a917d-e902-4afa-a4f6-de0a1f834093"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fire1"",
+                    ""type"": ""Button"",
+                    ""id"": ""418b7f74-708e-40ef-abd9-7f34105f33c7"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -169,7 +196,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""id"": ""ef192018-94d0-49e4-a619-22a6a75f3d97"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
-                    ""processors"": ""ScaleVector2(x=0.5,y=0.5)"",
+                    ""processors"": ""ScaleVector2(x=0.1,y=0.1)"",
                     ""groups"": """",
                     ""action"": ""Camera"",
                     ""isComposite"": false,
@@ -194,6 +221,72 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f96d946c-8c77-450b-b72b-3c111f8ae0a8"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eca223c5-6e33-4a63-ab17-9f858ff66e20"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9fd8c3c7-eac2-4211-bce1-54b6005b68d9"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""da5c5322-52e6-41e0-ac6c-9662f7ab43cc"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""78f15cc7-7aa5-47a6-af4f-f95a0f319ecc"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fire1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""929d3277-2cb1-4764-b820-7382a75d622b"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fire1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -590,6 +683,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""a00b3672-42d2-4a7e-9032-e92bf974deec"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""5a2febbd-9093-4278-8bac-29ced9409e87"",
                     ""path"": ""*/{Cancel}"",
                     ""interactions"": """",
@@ -869,6 +973,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_FirstPerson_Camera = m_FirstPerson.FindAction("Camera", throwIfNotFound: true);
         m_FirstPerson_Jump = m_FirstPerson.FindAction("Jump", throwIfNotFound: true);
         m_FirstPerson_Interact = m_FirstPerson.FindAction("Interact", throwIfNotFound: true);
+        m_FirstPerson_Sprint = m_FirstPerson.FindAction("Sprint", throwIfNotFound: true);
+        m_FirstPerson_Crouch = m_FirstPerson.FindAction("Crouch", throwIfNotFound: true);
+        m_FirstPerson_Fire1 = m_FirstPerson.FindAction("Fire1", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -949,6 +1056,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_FirstPerson_Camera;
     private readonly InputAction m_FirstPerson_Jump;
     private readonly InputAction m_FirstPerson_Interact;
+    private readonly InputAction m_FirstPerson_Sprint;
+    private readonly InputAction m_FirstPerson_Crouch;
+    private readonly InputAction m_FirstPerson_Fire1;
     public struct FirstPersonActions
     {
         private @PlayerControls m_Wrapper;
@@ -957,6 +1067,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Camera => m_Wrapper.m_FirstPerson_Camera;
         public InputAction @Jump => m_Wrapper.m_FirstPerson_Jump;
         public InputAction @Interact => m_Wrapper.m_FirstPerson_Interact;
+        public InputAction @Sprint => m_Wrapper.m_FirstPerson_Sprint;
+        public InputAction @Crouch => m_Wrapper.m_FirstPerson_Crouch;
+        public InputAction @Fire1 => m_Wrapper.m_FirstPerson_Fire1;
         public InputActionMap Get() { return m_Wrapper.m_FirstPerson; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -978,6 +1091,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Interact.started -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnInteract;
+                @Sprint.started -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnSprint;
+                @Sprint.performed -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnSprint;
+                @Sprint.canceled -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnSprint;
+                @Crouch.started -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnCrouch;
+                @Crouch.performed -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnCrouch;
+                @Crouch.canceled -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnCrouch;
+                @Fire1.started -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnFire1;
+                @Fire1.performed -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnFire1;
+                @Fire1.canceled -= m_Wrapper.m_FirstPersonActionsCallbackInterface.OnFire1;
             }
             m_Wrapper.m_FirstPersonActionsCallbackInterface = instance;
             if (instance != null)
@@ -994,6 +1116,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Sprint.started += instance.OnSprint;
+                @Sprint.performed += instance.OnSprint;
+                @Sprint.canceled += instance.OnSprint;
+                @Crouch.started += instance.OnCrouch;
+                @Crouch.performed += instance.OnCrouch;
+                @Crouch.canceled += instance.OnCrouch;
+                @Fire1.started += instance.OnFire1;
+                @Fire1.performed += instance.OnFire1;
+                @Fire1.canceled += instance.OnFire1;
             }
         }
     }
@@ -1158,6 +1289,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnCamera(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnSprint(InputAction.CallbackContext context);
+        void OnCrouch(InputAction.CallbackContext context);
+        void OnFire1(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

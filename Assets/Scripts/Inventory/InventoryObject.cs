@@ -60,20 +60,22 @@ public class InventoryObject : MonoBehaviour
             if (Container.Items[i].item == _item)
             {
                 InventorySlot currentItem = Container.Items[i];
+                string name = currentItem.item.displayName;
+
                 // -1 remove amount purges the whole slot
                 if ((currentItem.amount - removeAmount) <= 0 || removeAmount == -1)
                 {
                     Container.Items[i].UpdateSlot(-1, null, 0);
-
                 }
                 else
                 {
                     Container.Items[i].UpdateSlot(currentItem.item.Id, currentItem.item, currentItem.amount - removeAmount);
                 }
+                
                 if (removeAmount == -1) {
-                    StatusConsole.PrintToConsole(String.Format("Removed every <color=yellow>{0}</color> from your inventory", currentItem.item));
+                    StatusConsole.PrintToConsole(String.Format("Removed every <color=yellow>{0}</color> from your inventory", name));
                 } else {
-                    StatusConsole.PrintToConsole(String.Format("Removed <color=yellow>{0}</color> (x{1}) from your inventory", currentItem.item, removeAmount));
+                    StatusConsole.PrintToConsole(String.Format("Removed <color=yellow>{0}</color> (x{1}) from your inventory", name, removeAmount));
 
                 }
             }

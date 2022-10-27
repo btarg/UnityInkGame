@@ -22,6 +22,11 @@ public class StatusConsole : MonoBehaviour
 
     public static void PrintToConsole(string message) {
         
+        Debug.Log("[STATUS] " + message);
+        if (consoleText == null) {
+            return;
+        }
+
         consoleBuffer.Insert(0, message);
         instance.StartCoroutine(RemoveLastMessage());
         

@@ -47,7 +47,7 @@ public static class SaveManager
         jsonFile.Write(bytes, 0, bytes.Length);
         jsonFile.Close();
 
-        Debug.Log("Saved file to: " + GetFullPath());
+        StatusConsole.PrintToConsole("Saved file to: " + GetFullPath());
 
     }
 
@@ -77,6 +77,7 @@ public static class SaveManager
         else
         {
             Debug.LogWarning("Save file not found!");
+            StatusConsole.PrintToConsole("Save file not found!");
         }
         return null;
     }
