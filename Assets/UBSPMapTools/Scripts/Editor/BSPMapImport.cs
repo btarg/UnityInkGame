@@ -1916,6 +1916,19 @@ public class BSPMapImport : EditorWindow
         bsp_faces = null;
         bsp_mesh_vertices = null;
         bsp_entities = null;
+
+
+        GameObject[] objects = BSPGameObjectHelper.GetAllTaggedObjects();
+
+        GameObject globalParent = new GameObject("BSP World Parent");
+        globalParent.tag = BSPGameObjectHelper.BSPTag;
+
+        foreach (GameObject go in objects) {
+            if (go.transform.parent == null) {
+                go.transform.parent = globalParent.transform;
+            }
+        }
+
     }
 
     static void ProcessNode(int node_id, List<int> face_list1)
