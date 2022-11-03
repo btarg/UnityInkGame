@@ -166,7 +166,7 @@ public class UBSPPlayer : MonoBehaviour
 
 	void Update ()
 	{
-		if (!canMove || DialogueManager.GetInstance().dialogueIsPlaying)
+		if (!canMove || DialogueManager.GetInstance().dialogueIsPlaying || LoadingScreen.GetInstance().isLoading)
 			return;
 
 		frame_time = Time.deltaTime;

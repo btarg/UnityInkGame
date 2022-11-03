@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 
 public class InteractiveObject : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class InteractiveObject : MonoBehaviour
     public bool canInteract = true;
     public bool hasCooldown = false;
     public float cooldownTime = 1f;
+
+    [Header("Level Transition")]
+    public Scene transitionScene;
 
     [Header("Equipped Item Requirement")]
     public InventoryItem requiredItem = null;
@@ -46,9 +50,12 @@ public class InteractiveObject : MonoBehaviour
         if (equipped == null)
             return;
 
-        if (equipped.item == requiredItem && equipped.amount >= requiredItemAmount) {
+        if (equipped.item == requiredItem && equipped.amount >= requiredItemAmount)
+        {
             requirementMet = true;
-        } else {
+        }
+        else
+        {
             requirementMet = false;
         }
 
@@ -59,66 +66,79 @@ public class InteractiveObject : MonoBehaviour
     private void UpdateInteractMessage()
     {
 
-        if (requiredItem != null)
+        if (transitionScene != null)
         {
-            
-            // Now check if the requirement was met
-            if (!requirementMet) {
-
-                interactionType = InteractionType.ItemRequired;
-                interactionDescription = String.Format("<color=red>Requires {0} (x{1})</color>", requiredItem.displayName, requiredItemAmount);
-                // Don't do the normal interaction stuff
-                return;
-
-            }
-
-        }
-
-        if (character != null)
-        {
-            string characterColor = ColorUtility.ToHtmlStringRGB(character.characterColor);
-            string colouredName = String.Format("<color=#{0}>{1}</color>", characterColor, character.characterName);
-            string interactMessage = "";
             switch (interactionType)
             {
-                case InteractiveObject.InteractionType.Talk:
-                    interactMessage = "Speak to ";
-                    break;
-                case InteractiveObject.InteractionType.Generic:
-                    interactMessage = "Interact with ";
+                case InteractiveObject.InteractionType.GoTo:
+                    string locationName = SceneNames.GetSceneName(transitionScene.name);
+                    interactionDescription = "Go to " + locationName;
                     break;
             }
 
-            interactionDescription = interactMessage + colouredName;
-        }
-
-        ItemPickup itemPickup = gameObject.GetComponent<ItemPickup>();
-
-        if (itemPickup != null)
-        {
-
-            string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
-
-            colouredName += String.Format(" (x{0})", itemPickup.amount.ToString());
-
-            interactionType = InteractiveObject.InteractionType.Generic;
-            string interactMessage = "Look at ";
-            if (itemPickup.canPickup)
+            if (requiredItem != null)
             {
-                interactionType = InteractiveObject.InteractionType.Pickup;
-                interactMessage = "Take ";
+
+                // Now check if the requirement was met
+                if (!requirementMet)
+                {
+
+                    interactionType = InteractionType.ItemRequired;
+                    interactionDescription = String.Format("<color=red>Requires {0} (x{1})</color>", requiredItem.displayName, requiredItemAmount);
+                    // Don't do the normal interaction stuff
+                    return;
+
+                }
+
             }
 
-            interactionDescription = interactMessage + colouredName;
+            if (character != null)
+            {
+                string characterColor = ColorUtility.ToHtmlStringRGB(character.characterColor);
+                string colouredName = String.Format("<color=#{0}>{1}</color>", characterColor, character.characterName);
+                string interactMessage = "";
+                switch (interactionType)
+                {
+                    case InteractiveObject.InteractionType.Talk:
+                        interactMessage = "Speak to ";
+                        break;
+                    case InteractiveObject.InteractionType.Generic:
+                        interactMessage = "Interact with ";
+                        break;
+                }
+
+                interactionDescription = interactMessage + colouredName;
+            }
+
+            ItemPickup itemPickup = gameObject.GetComponent<ItemPickup>();
+
+            if (itemPickup != null)
+            {
+
+                string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
+
+                colouredName += String.Format(" (x{0})", itemPickup.amount.ToString());
+
+                interactionType = InteractiveObject.InteractionType.Generic;
+                string interactMessage = "Look at ";
+                if (itemPickup.canPickup)
+                {
+                    interactionType = InteractiveObject.InteractionType.Pickup;
+                    interactMessage = "Take ";
+                }
+
+                interactionDescription = interactMessage + colouredName;
+
+            }
+
 
         }
-
     }
-
 
     public void PlayerInteract()
     {
-        if (requiredItem != null && !requirementMet) {
+        if (requiredItem != null && !requirementMet)
+        {
             StatusConsole.PrintToConsole("You do not have the required item equipped.");
             return;
         }
@@ -127,7 +147,8 @@ public class InteractiveObject : MonoBehaviour
         {
             onPlayerInteract.Invoke();
 
-            if (requiredItem != null && requirementMet) {
+            if (requiredItem != null && requirementMet)
+            {
                 // Take the item from the player if necessary
                 if (takeRequiredItemFromPlayer)
                     inventory.RemoveItem(requiredItem, requiredItemAmount);
