@@ -1,10 +1,10 @@
-// Game: Quake 3
+// Game: Unity BSP
 // Format: Quake3 (Valve)
 // entity 0
 {
 "mapversion" "220"
 "classname" "worldspawn"
-"_tb_textures" "textures;textures/ai;textures/sbs1;textures/sbs1/128x128;textures/sbs1/128x128/Bricks;textures/sbs1/128x128/Grass;textures/sbs1/128x128/Roofs;textures/sbs1/128x128/Tile;textures/sbs1/128x128/Tile/Materials;textures/sbs1/128x128/Wood;textures/sbs2;textures/sbs2/128x128;textures/sbs2/128x128/Brick;textures/sbs2/128x128/Dirt;textures/sbs2/128x128/Elements;textures/sbs2/128x128/Metal;textures/sbs2/128x128/Plaster;textures/sbs2/128x128/Stone;textures/sbs2/128x128/Tile;textures/sbs2/128x128/Wood"
+"_tb_textures" "textures;textures/ai;textures/dev;textures/dev_kenney;textures/dev_kenney/Dark;textures/dev_kenney/Green;textures/dev_kenney/Light;textures/dev_kenney/Orange;textures/dev_kenney/Purple;textures/dev_kenney/Red;textures/sbs1;textures/sbs1/128x128;textures/sbs1/128x128/Bricks;textures/sbs1/128x128/Grass;textures/sbs1/128x128/Roofs;textures/sbs1/128x128/Tile;textures/sbs1/128x128/Tile/Materials;textures/sbs1/128x128/Wood;textures/sbs2;textures/sbs2/128x128;textures/sbs2/128x128/Brick;textures/sbs2/128x128/Dirt;textures/sbs2/128x128/Elements;textures/sbs2/128x128/Metal;textures/sbs2/128x128/Plaster;textures/sbs2/128x128/Stone;textures/sbs2/128x128/Tile;textures/sbs2/128x128/Wood"
 "_tb_def" "external:D:/Unity Projects/Dialogue/Assets/Q3Project/UBSPTrenchbroom/entities.ent"
 "_tb_mod" "UBSPTrenchbroom"
 // brush 0
@@ -44,6 +44,7 @@
 {
 "classname" "brush_rigidbody"
 "collision" "2"
+"name" "box"
 // brush 0
 {
 ( 96 -16 48 ) ( 96 32 16 ) ( 96 32 48 ) sbs1/128x128/Grass/Grass_24-128x128 [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
@@ -52,5 +53,46 @@
 ( 128 32 48 ) ( 96 -16 48 ) ( 96 32 48 ) sbs1/128x128/Grass/Grass_24-128x128 [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
 ( 128 32 48 ) ( 96 32 16 ) ( 128 32 16 ) sbs1/128x128/Grass/Grass_24-128x128 [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
 ( 128 32 48 ) ( 128 -16 16 ) ( 128 -16 48 ) sbs1/128x128/Grass/Grass_24-128x128 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+}
+}
+// entity 3
+{
+"classname" "brush_trigger"
+"targetin" "noisemaker"
+"name" "funnytrigger"
+"targetout" ""
+"target" "noisemaker"
+// brush 0
+{
+( -352 -272 128 ) ( -352 -128 16 ) ( -352 -128 128 ) dev/trigger [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -224 -272 128 ) ( -352 -272 16 ) ( -352 -272 128 ) dev/trigger [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -224 -128 16 ) ( -352 -272 16 ) ( -224 -272 16 ) dev/trigger [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -224 -128 128 ) ( -352 -272 128 ) ( -352 -128 128 ) dev/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -224 -128 128 ) ( -352 -128 16 ) ( -224 -128 16 ) dev/trigger [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -224 -128 128 ) ( -224 -272 16 ) ( -224 -272 128 ) dev/trigger [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+}
+}
+// entity 4
+{
+"classname" "env_sound"
+"origin" "-108 28 20"
+"name" "noisemaker"
+"wavname" "sound/perc.wav"
+"parent" ""
+"range" "32"
+"spawnflags" "1"
+"targetname" "noisemaker"
+}
+// entity 5
+{
+"classname" ""
+// brush 0
+{
+( -336 -24 40 ) ( -336 24 16 ) ( -336 24 40 ) ai/download [ 0 -0.6666666666666666 0 16 ] [ 0 0 -0.6666666666666665 -5.333334 ] 0 1 1
+( -256 -48 40 ) ( -336 -48 16 ) ( -336 -48 40 ) ai/download [ 0.6000000000000001 0 0 -102.399994 ] [ 0 0 -0.6666666666666665 -5.333334 ] 0 1 1
+( -256 24 16 ) ( -336 -24 16 ) ( -256 -24 16 ) ai/download [ -0.6000000000000001 0 0 102.399994 ] [ 0 -0.6666666666666666 0 16 ] 0 1 1
+( -256 24 64 ) ( -336 -24 64 ) ( -336 24 64 ) ai/download [ 0.6000000000000001 0 0 -102.399994 ] [ 0 -0.6666666666666666 0 16 ] 0 1 1
+( -256 24 40 ) ( -336 24 16 ) ( -256 24 16 ) ai/download [ -0.6000000000000001 0 0 102.399994 ] [ 0 0 -0.6666666666666665 -5.333334 ] 0 1 1
+( -256 24 40 ) ( -256 -24 16 ) ( -256 -24 40 ) ai/download [ 0 0.6666666666666666 0 -16 ] [ 0 0 -0.6666666666666665 -5.333334 ] 0 1 1
 }
 }

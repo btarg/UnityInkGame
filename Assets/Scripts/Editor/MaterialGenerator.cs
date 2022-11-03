@@ -80,7 +80,7 @@ public class MaterialGenerator : EditorWindow
                 material.SetTexture(texturePropertyName, tex);
 
                 // get the last item split by slash
-                string fileName = fileSplit[fileSplit.Length - 1].Split(".")[0];
+                string fileName = BSPCommon.RemoveExtension(fileSplit[fileSplit.Length - 1]);
 
                 // remove topmost folder
                 string toRemove = fileName.Substring(0, fileName.Split("\\")[0].Length + 1);
@@ -107,7 +107,7 @@ public class MaterialGenerator : EditorWindow
                 }
 
                 // overwrite existing asset
-                if (Directory.Exists(finalPath))
+                if (!string.IsNullOrEmpty(AssetDatabase.AssetPathToGUID(finalPath)))
                 {
                     if (overwrite) {
                         Debug.LogWarning("Overwriting file: " + finalPath);

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -9,9 +10,12 @@ public class BSPCommon : UnityEngine.Object
 	// Settings
 	const string settings_file = "Assets/UBSPMapTools/Scripts/Editor/ubsp_settings.txt";
 	public static string Q3ProjectPath = "";
+	public static string CompilerPath = "";
 	public static string MaterialsPath = "Assets/Materials";
 	public static string ModelsPath = "Assets/Models";
 	public static string SoundPath = "Assets/Sounds";
+	public static string MapPath = "Assets/Q3Project/baseq3/maps";
+	public static bool deleteBSP = true;
 	public static string ModelPrefabsPath = "Assets/ModelPrefabs";
 	public static float MaxMeshSurfaceArea = 3000.0f;
 	public static float UV2Padding = 0.02f;
@@ -140,15 +144,21 @@ public class BSPCommon : UnityEngine.Object
 
 	public static void SaveSettings ()
 	{
-		string[] settings = new string[7];
+		string[] settings = new string[10];
 		settings[0] = Q3ProjectPath;
-		settings[1] = MaterialsPath;
-		settings[2] = ModelsPath;
-		settings[3] = SoundPath;
-		settings[4] = ModelPrefabsPath;
-		settings[5] = MaxMeshSurfaceArea.ToString();
-		settings[6] = UV2Padding.ToString();
+		settings[1] = CompilerPath;
+		settings[2] = MapPath;
+		settings[3] = MaterialsPath;
+		settings[4] = ModelsPath;
+		settings[5] = SoundPath;
+		settings[6] = ModelPrefabsPath;
+		settings[7] = MaxMeshSurfaceArea.ToString();
+		settings[8] = UV2Padding.ToString();
+		
+		settings[9] = Convert.ToString(deleteBSP);
+
 		File.WriteAllLines(settings_file, settings, System.Text.Encoding.UTF8);
+		Debug.Log("Save settings: " + settings_file);
 		settings = null;
 	}
 	
@@ -158,14 +168,22 @@ public class BSPCommon : UnityEngine.Object
 		if (!File.Exists(settings_file)) return false;
 		string[] settings = File.ReadAllLines(settings_file);
 		Q3ProjectPath = settings[0];
-		MaterialsPath = settings[1];
-		ModelsPath = settings[2];
-		SoundPath = settings[3];
-		ModelPrefabsPath = settings[4];
-		MaxMeshSurfaceArea = float.Parse(settings[5]);
-		UV2Padding = float.Parse(settings[6]);
+		CompilerPath = settings[1];
+		MapPath = settings[2];
+		MaterialsPath = settings[3];
+		ModelsPath = settings[4];
+		SoundPath = settings[5];
+		ModelPrefabsPath = settings[6];
+		MaxMeshSurfaceArea = float.Parse(settings[7]);
+		UV2Padding = float.Parse(settings[8]);
+
+		deleteBSP = Convert.ToBoolean(settings[9]);
+
 		hasSettings = true;
 		settings = null;
+
+		Debug.Log("Loaded settings: " + settings_file);
+
 		return true;
 	}
 

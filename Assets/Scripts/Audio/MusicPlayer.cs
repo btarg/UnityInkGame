@@ -10,7 +10,7 @@ public class MusicPlayer : MonoBehaviour
 
     [Header("Fade")]
     public float fadeTime = 2f;
-    public float startFadeOutOffset = 1f;
+    private float startFadeOutOffset = 1f;
 
     public float defaultVolume = 1f;
     AudioSource source;
@@ -32,15 +32,20 @@ public class MusicPlayer : MonoBehaviour
     }
 
     public void Pause() {
+        if (source == null)
+            return;
         source.Pause();
     }
     public void Unpause() {
+        if (source == null)
+            return;
         source.UnPause();
     }
 
     public void FadeOutCurrentSong() {
         // fade out last song if there was one playing
         if (source.isPlaying) {
+            Debug.Log("fading out audio...");
             StartCoroutine(AudioHelper.FadeOut(source, fadeTime));
         }
     }
@@ -57,7 +62,7 @@ public class MusicPlayer : MonoBehaviour
 
         AudioClip clip = soundtrack.ToArray()[Random.Range(0, soundtrack.Count - 1)];
         
-        StatusConsole.PrintToConsole("Now Playing: " + clip.name);
+        Debug.Log("Now Playing: " + clip.name);
 
         source.clip = clip;
 
@@ -69,6 +74,7 @@ public class MusicPlayer : MonoBehaviour
         StartCoroutine(AudioHelper.FadeIn(source, fadeTime, defaultVolume));
 
         // invoke fade out effect and new song later
+        startFadeOutOffset = source.clip.length / 8;
         Invoke("FadeOutCurrentSong", source.clip.length - startFadeOutOffset);
         Invoke("PlayNextSong", source.clip.length);
     }

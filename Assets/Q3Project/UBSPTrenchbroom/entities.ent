@@ -39,7 +39,7 @@
 <flag key="INSTANCE" name="Instance" bit="2">Instance.</flag>
 </group>
 
-<group name="brush_trigger" color="0 0.4 1">Brush Model.
+<group name="brush_trigger" color="0 0.4 1">Trigger.
 <string key="name" name="Object Name">Object Name.</string>
 <target key="parent" name="Object Parent">Object Parent.</target>
 <target key="targetin" name="Entry Target">Entry Target.</target>
@@ -47,6 +47,11 @@
 <string key="restrict" name="Restrict Name">Restrict Name.</string>
 <flag key="Once" name="Once" bit="2">Remove after first entry.</flag>
 <flag key="Partial" name="Partial" bit="3">Name contains string.</flag>
+</group>
+
+<group name="brush_playerclip" color="0 0.4 1">A brush that only the player collides with.
+<string key="name" name="Object Name">Object Name.</string>
+<target key="parent" name="Object Parent">Object Parent.</target>
 </group>
 
 <group name="brush_door_r" color="0 0.4 1">Rotating Door.

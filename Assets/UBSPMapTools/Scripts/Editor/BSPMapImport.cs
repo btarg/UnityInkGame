@@ -1,3 +1,6 @@
+using System.Net.Mime;
+using System.Data;
+
 /*
 Copyright (c) 2021 John Evans
 Modified by btarg, 2022
@@ -21,14 +24,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#define INFO_PLAYER_START
-#define CUSTOM_ENTITIES
 using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using UnityEditor.Events;
+using UnityEngine.Events;
 
 public class BSPMapImport : EditorWindow
 {
@@ -37,6 +41,11 @@ public class BSPMapImport : EditorWindow
     private static string MaterialsPath;
     private static string ModelsPath;
     private static string SoundPath;
+
+    private static string MapPath;
+    private static string CompilerPath;
+    private static bool deleteBSP;
+
     private static float UV2Padding;
     private static bool loadEntities = true;
     private static bool splitMesh = true;
@@ -379,7 +388,7 @@ public class BSPMapImport : EditorWindow
             {
                 if (bsp_leaffaces[faceOffset] >= face_min && bsp_leaffaces[faceOffset] <= face_max)
                 {
-                    if (!tex_infos[bsp_faces[bsp_leaffaces[faceOffset]].tex_index].name.Contains("nodraw") && free_faces[bsp_leaffaces[faceOffset]])
+                    if (!tex_infos[bsp_faces[bsp_leaffaces[faceOffset]].tex_index].name.ContainsAny("nodraw", "playerclip", "trigger") && free_faces[bsp_leaffaces[faceOffset]])
                     {
                         receiver.Add(bsp_leaffaces[faceOffset]);
                         free_faces[bsp_leaffaces[faceOffset]] = false;
@@ -397,7 +406,7 @@ public class BSPMapImport : EditorWindow
             {
                 if (bsp_leaffaces[faceOffset] >= face_min && bsp_leaffaces[faceOffset] <= face_max)
                 {
-                    if (!(tex_infos[bsp_faces[bsp_leaffaces[faceOffset]].tex_index].name.Contains("nodraw")) && !face_list.Contains(bsp_leaffaces[faceOffset]))
+                    if (!(tex_infos[bsp_faces[bsp_leaffaces[faceOffset]].tex_index].name.ContainsAny("nodraw", "playerclip", "trigger")) && !face_list.Contains(bsp_leaffaces[faceOffset]))
                     {
                         int offset2 = bsp_faces[bsp_leaffaces[faceOffset]].mesh_vertex;
                         for (int i2 = 0; i2 < bsp_faces[bsp_leaffaces[faceOffset]].n_mesh_vtx; i2 += 3)
@@ -418,47 +427,74 @@ public class BSPMapImport : EditorWindow
     {
         window = BSPMapImport.CreateInstance<BSPMapImport>();
         window.titleContent = new GUIContent("Import BSP");
+
+        LoadSettings();
+
+        window.Show();
+    }
+    
+
+    private static void LoadSettings()
+    {
         BSPCommon.LoadSettings();
         MaterialsPath = BSPCommon.MaterialsPath;
         ModelsPath = BSPCommon.ModelsPath;
         SoundPath = BSPCommon.SoundPath;
+        MapPath = BSPCommon.MapPath;
+        CompilerPath = BSPCommon.CompilerPath;
         MaxMeshSurfaceArea = BSPCommon.MaxMeshSurfaceArea;
         UV2Padding = BSPCommon.UV2Padding;
-        window.ShowUtility();
+
+        deleteBSP = BSPCommon.deleteBSP;
     }
 
     void OnGUI()
     {
         EditorGUILayout.BeginHorizontal(GUILayout.Width(330), GUILayout.Height(20));
-        EditorGUILayout.LabelField("Materials Path:", GUILayout.Width(100));
-        if (GUILayout.Button("Browse", GUILayout.Width(57)))
-        {
-            MaterialsPath = BSPCommon.ConvertPath(EditorUtility.OpenFolderPanel("Materials Path", "Assets", ""));
-        }
-        EditorGUILayout.Space();
-        if (GUILayout.Button("Save Defaults", GUILayout.Width(100)))
+        EditorGUILayout.LabelField("Settings", GUILayout.Width(64));
+        if (GUILayout.Button("Save", GUILayout.Width(64)))
         {
             BSPCommon.MaterialsPath = MaterialsPath;
             BSPCommon.ModelsPath = ModelsPath;
             BSPCommon.SoundPath = SoundPath;
+            BSPCommon.MapPath = MapPath;
+            BSPCommon.CompilerPath = CompilerPath;
             BSPCommon.UV2Padding = UV2Padding;
             BSPCommon.MaxMeshSurfaceArea = MaxMeshSurfaceArea;
+            BSPCommon.deleteBSP = deleteBSP;
             BSPCommon.SaveSettings();
-            Debug.Log("Saved Settings: bsp_settings.txt");
+        }
+        if (GUILayout.Button("Load", GUILayout.Width(64)))
+        {
+            LoadSettings();
+        }
+
+        EditorGUILayout.EndHorizontal();
+        GUILayout.Space(24);
+
+        // Materials path
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(200), GUILayout.Height(20));
+        EditorGUILayout.LabelField("Materials Path:", GUILayout.Width(120));
+        if (GUILayout.Button("Browse", GUILayout.Width(57)))
+        {
+            MaterialsPath = BSPCommon.ConvertPath(EditorUtility.OpenFolderPanel("Materials Path", "Assets", ""));
         }
         EditorGUILayout.EndHorizontal();
         MaterialsPath = EditorGUILayout.TextField(MaterialsPath);
+
+        // Models path
         EditorGUILayout.BeginHorizontal(GUILayout.Width(200), GUILayout.Height(20));
-        EditorGUILayout.LabelField("Models Path:", GUILayout.Width(100));
+        EditorGUILayout.LabelField("Prefabs Path (\"Models\"):", GUILayout.Width(120));
         if (GUILayout.Button("Browse", GUILayout.Width(57)))
         {
-            ModelsPath = BSPCommon.ConvertPath(EditorUtility.OpenFolderPanel("Models Path", "Assets", ""));
+            ModelsPath = BSPCommon.ConvertPath(EditorUtility.OpenFolderPanel("Prefabs Path", "Assets", ""));
         }
         EditorGUILayout.EndHorizontal();
         ModelsPath = EditorGUILayout.TextField(ModelsPath);
 
+        // Sound path
         EditorGUILayout.BeginHorizontal(GUILayout.Width(200), GUILayout.Height(20));
-        EditorGUILayout.LabelField("Sound Path:", GUILayout.Width(100));
+        EditorGUILayout.LabelField("Sound Path:", GUILayout.Width(120));
         if (GUILayout.Button("Browse", GUILayout.Width(57)))
         {
             SoundPath = BSPCommon.ConvertPath(EditorUtility.OpenFolderPanel("Sound Path", "Assets", ""));
@@ -473,21 +509,58 @@ public class BSPMapImport : EditorWindow
         {
             MaxMeshSurfaceArea = EditorGUILayout.FloatField("Max Surface Area", MaxMeshSurfaceArea);
         }
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(500), GUILayout.Height(27));
-        if (GUILayout.Button("Import BSP", GUILayout.Width(164), GUILayout.Height(25)))
+
+        GUILayout.Space(24);
+
+
+        // Compiler path
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(200), GUILayout.Height(20));
+        EditorGUILayout.LabelField("Compiler Path:", GUILayout.Width(120));
+        if (GUILayout.Button("Browse", GUILayout.Width(57)))
         {
-            ImportBsp();
+            CompilerPath = BSPCommon.ConvertPath(EditorUtility.OpenFilePanel("Compiler Path", "Assets", "exe"));
         }
-        if (GUILayout.Button("Import MAP", GUILayout.Width(164), GUILayout.Height(25)))
+        EditorGUILayout.EndHorizontal();
+        CompilerPath = EditorGUILayout.TextField(CompilerPath);
+
+        // Map path
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(200), GUILayout.Height(20));
+        EditorGUILayout.LabelField("Map Path:", GUILayout.Width(120));
+        if (GUILayout.Button("Browse", GUILayout.Width(57)))
         {
-            ImportMap();
+            MapPath = BSPCommon.ConvertPath(EditorUtility.OpenFilePanel("Map Path", "Assets", "map"));
+        }
+        EditorGUILayout.EndHorizontal();
+        MapPath = EditorGUILayout.TextField(MapPath);
+
+        deleteBSP = EditorGUILayout.Toggle("Delete BSP when done", deleteBSP);
+
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(500), GUILayout.Height(27));
+        if (GUILayout.Button("Import!", GUILayout.Width(330), GUILayout.Height(25)))
+        {
+            if (MapPath.EndsWith(".bsp"))
+            {
+                ImportBsp(MapPath);
+            }
+            else if (MapPath.EndsWith(".map"))
+            {
+                ImportMap(MapPath);
+            }
+
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(500), GUILayout.Height(27));
+        if (GUILayout.Button("Remove all generated GameObjects", GUILayout.Width(330), GUILayout.Height(25)))
+        {
+            BSPGameObjectHelper.RemoveAllTaggedObjects();
+
         }
         EditorGUILayout.EndHorizontal();
     }
 
-    static void ImportBsp()
+    static void ImportBsp(string input_path)
     {
-        string input_path = EditorUtility.OpenFilePanel("Import BSP", current_folder, "bsp");
         if (string.IsNullOrEmpty(input_path))
         {
             return;
@@ -496,61 +569,99 @@ public class BSPMapImport : EditorWindow
         LoadBSP(input_path);
     }
 
-    static void ImportMap()
+    static void ImportMap(string input_path)
     {
-        string input_path = EditorUtility.OpenFilePanel("Import MAP", current_folder, "map");
         if (string.IsNullOrEmpty(input_path))
         {
             return;
         }
-        current_folder = Path.GetDirectoryName(input_path);
-        if (BSPCommon.StringEndsWith(input_path, ".map"))
+        Debug.Log("Attempting to import map file: " + input_path);
+
+        string bsp_path = BSPCommon.RemoveExtension(input_path) + ".bsp";
+
+        if (File.Exists(bsp_path))
         {
-            string game_dir = BSPCommon.GetParentFolder(Path.GetDirectoryName(input_path));
-            string tools_path = BSPCommon.GetParentFolder(game_dir) + "/Tools";
-            string exepath1 = tools_path + "/q3map2.exe";
-            string exepath2 = tools_path + "/q3map.exe";
-            string compiler_path = "";
-            if (File.Exists(exepath1))
+            if (EditorUtility.DisplayDialog("Reimport", bsp_path + " already exists. Reimport the last version?", "Compile again", "Reimport from last compilation"))
             {
-                compiler_path = exepath1;
-            }
-            else if (File.Exists(exepath2))
-            {
-                compiler_path = exepath2;
+                File.Delete(bsp_path);
             }
             else
             {
-                EditorUtility.DisplayDialog("Error", "Can only load maps from baseq3/maps folder.", "OK");
+                Debug.Log("Importing existing BSP...");
+                ImportBsp(bsp_path);
                 return;
             }
-            System.Diagnostics.ProcessStartInfo args1 = new System.Diagnostics.ProcessStartInfo(String.Format("\"{0}\"", compiler_path), String.Format("\"{0}\"", input_path));
-            args1.WorkingDirectory = game_dir;
-            System.Diagnostics.Process q3map = System.Diagnostics.Process.Start(args1);
-            q3map.WaitForExit(30000);
-            q3map.Close();
-            input_path = BSPCommon.RemoveExtension(input_path) + ".bsp";
-            if (!File.Exists(input_path))
-            {
-                Debug.LogError("Map compiler did not generate a BSP file.");
-                return;
-            }
-            LoadBSP(input_path);
-            string df = input_path;
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".srf";
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".prt";
-            if (File.Exists(df)) File.Delete(df);
-            //df = BSPCommon.RemoveExtension(df)+".jmx";
-            //if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".bak";
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".max";
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".lin";
-            if (File.Exists(df)) File.Delete(df);
         }
+
+        // Convert compiler path to full path for windows
+        string fullPath = BSPCommon.ConvertPath(CompilerPath);
+        if (fullPath.StartsWith("Assets"))
+        {
+            fullPath = Path.Combine(Application.dataPath, fullPath.Replace("Assets/", ""));
+        }
+
+        // also convert the input path for the map file
+        string inputPath = BSPCommon.ConvertPath(input_path);
+        if (inputPath.StartsWith("Assets"))
+        {
+            inputPath = Path.Combine(Application.dataPath, inputPath.Replace("Assets/", ""));
+        }
+
+        current_folder = Path.GetDirectoryName(inputPath);
+        string game_dir = BSPCommon.GetParentFolder(current_folder);
+
+        if (!File.Exists(fullPath))
+        {
+            EditorUtility.DisplayDialog("Q3Map2 Error", "q3map2.exe not found at " + fullPath, "OK");
+            return;
+        }
+        if (!File.Exists(inputPath))
+        {
+            EditorUtility.DisplayDialog("Map Error", "Please specify a map to compile", "OK");
+            return;
+        }
+
+        System.Diagnostics.ProcessStartInfo args1 = new System.Diagnostics.ProcessStartInfo(String.Format("\"{0}\"", fullPath), String.Format("\"{0}\"", inputPath));
+        args1.WorkingDirectory = game_dir;
+
+
+        System.Diagnostics.Process q3map = System.Diagnostics.Process.Start(args1);
+        q3map.WaitForExit(30000);
+        q3map.Close();
+
+        if (!File.Exists(bsp_path))
+        {
+            Debug.LogError("Map compiler did not generate a BSP file.");
+            return;
+        }
+
+        Debug.Log("Map compiled! Loading BSP...");
+        LoadBSP(bsp_path);
+
+        if (deleteBSP)
+        {
+            File.Delete(bsp_path);
+            string metafile = BSPCommon.RemoveExtension(input_path) + ".meta";
+            if (File.Exists(metafile))
+            {
+                File.Delete(metafile);
+            }
+        }
+
+        string df = input_path;
+        //if (File.Exists(df)) File.Delete(df);
+        df = BSPCommon.RemoveExtension(df) + ".srf";
+        if (File.Exists(df)) File.Delete(df);
+        df = BSPCommon.RemoveExtension(df) + ".prt";
+        if (File.Exists(df)) File.Delete(df);
+        //df = BSPCommon.RemoveExtension(df)+".jmx";
+        //if (File.Exists(df)) File.Delete(df);
+        df = BSPCommon.RemoveExtension(df) + ".bak";
+        if (File.Exists(df)) File.Delete(df);
+        df = BSPCommon.RemoveExtension(df) + ".max";
+        if (File.Exists(df)) File.Delete(df);
+        df = BSPCommon.RemoveExtension(df) + ".lin";
+        if (File.Exists(df)) File.Delete(df);
     }
 
     static void LoadBSP(string bsp_path)
@@ -884,10 +995,10 @@ public class BSPMapImport : EditorWindow
         List<ObjectStringPair> map_elevators = new List<ObjectStringPair>();
         List<ObjectStringPair> target_users = new List<ObjectStringPair>();
         List<AudioClip> map_sounds = new List<AudioClip>();
-        //#if CUSTOM_ENTITIES
+        //
         //List<Entities.PathTrack> scene_path_tracks = new List<Entities.PathTrack>();
         //List<string> path_track_links = new List<string>();
-        //#endif
+        //
 
         int brush_model_count = 0;
 
@@ -921,7 +1032,7 @@ public class BSPMapImport : EditorWindow
 
             for (int i = 0; i < bsp_models[brush_model_entities[i15].modelIndex].n_faces; i++)
             {
-                if (!tex_infos[bsp_faces[bsp_models[brush_model_entities[i15].modelIndex].face + i].tex_index].name.Contains("nodraw"))
+                if (!tex_infos[bsp_faces[bsp_models[brush_model_entities[i15].modelIndex].face + i].tex_index].name.ContainsAny("nodraw", "playerclip", "trigger"))
                 {
                     face_indices.Add(bsp_models[brush_model_entities[i15].modelIndex].face + i);
                 }
@@ -934,7 +1045,7 @@ public class BSPMapImport : EditorWindow
                     {
                         for (int i = 0; i < bsp_models[brush_model_entities[i15 + 1].modelIndex].n_faces; i++)
                         {
-                            if (!tex_infos[bsp_faces[bsp_models[brush_model_entities[i15 + 1].modelIndex].face + i].tex_index].name.Contains("nodraw"))
+                            if (!tex_infos[bsp_faces[bsp_models[brush_model_entities[i15 + 1].modelIndex].face + i].tex_index].name.ContainsAny("nodraw", "playerclip", "trigger"))
                             {
                                 face_indices.Add(bsp_models[brush_model_entities[i15 + 1].modelIndex].face + i);
                             }
@@ -1047,7 +1158,7 @@ public class BSPMapImport : EditorWindow
             mesh1.name = model_name + "_m";
             if (normal_smoothing > 0) AverageMeshNormals(mesh1, normal_smoothing);
             int material_count = mesh_submeshes.Count;
-            GameObject model_object = new GameObject(model_name);
+            GameObject model_object = BSPGameObjectHelper.CreateTaggedGameObject(model_name);
             model_object.transform.position = model_origin;
             model_object.AddComponent<MeshFilter>().mesh = mesh1;
             Material[] mesh_materials = new Material[material_count];
@@ -1128,7 +1239,7 @@ public class BSPMapImport : EditorWindow
             if (!string.IsNullOrEmpty(parent)) transform_children.Add(new ObjectStringPair(model_object, parent));
             if (!string.IsNullOrEmpty(cubemap_name)) cubemap_users.Add(new ObjectStringPair(model_object, cubemap_name));
             face_indices.Clear();
-#if CUSTOM_ENTITIES // Additional setup for custom brush entities like doors and buttons.
+            // Additional setup for custom brush entities like doors and buttons.
             string be_classname = bsp_entities[be_entity_index].GetString("classname");
             int be_flags = bsp_entities[be_entity_index].GetInt("spawnflags", 0);
             string sound_name = "";
@@ -1331,15 +1442,16 @@ public class BSPMapImport : EditorWindow
                     rb1.mass = bsp_entities[be_entity_index].GetFloat("mass", 5.0f);
                     model_object.isStatic = false;
 
-					// interpolate by default
-					rb1.interpolation = RigidbodyInterpolation.Interpolate;
+                    // interpolate by default
+                    rb1.interpolation = RigidbodyInterpolation.Interpolate;
                     break;
+
 
                 case "brush_elevator":
                     UBSPEntities.UBSPElevator e1 = model_object.AddComponent<UBSPEntities.UBSPElevator>();
                     if ((be_flags & 0x00000010) > 0) // Add TriggerParent
                     {
-                        GameObject pt_object = new GameObject(model_name + "_pt");
+                        GameObject pt_object = BSPGameObjectHelper.CreateTaggedGameObject(model_name + "_pt");
                         pt_object.transform.position = model_object.transform.position;
                         pt_object.transform.parent = model_object.transform;
                         BoxCollider bc_e = pt_object.AddComponent<BoxCollider>();
@@ -1419,7 +1531,7 @@ public class BSPMapImport : EditorWindow
                     model_object.isStatic = false;
                     break;
             }
-#endif
+
         }
 
         List<GameObject> map_models = new List<GameObject>();
@@ -1435,8 +1547,15 @@ public class BSPMapImport : EditorWindow
             switch (entity_class_name)
             {
                 case "model":
+                    parent_name = bsp_entities[i].GetString("parent");
+                    cubemap_name = bsp_entities[i].GetString("cubemap");
+                    entity_name = bsp_entities[i].GetString("name");
+
                     string md3_path = bsp_entities[i].GetString("model");
-                    if (string.IsNullOrEmpty(md3_path) || !md3_path.Contains("models")) break;
+                    if (string.IsNullOrEmpty(md3_path))
+                    {
+                        Debug.LogWarning("Empty model path for entity: " + entity_name);
+                    }
                     string model_path = ModelsPath + "/" + BSPCommon.GetPathInFolder(md3_path, "models");
                     model_path = model_path.Replace(".md3", "");
                     string model_ext1 = model_path + ".fbx";
@@ -1489,9 +1608,7 @@ public class BSPMapImport : EditorWindow
                         s_obj.ApplyModifiedProperties();
                         s_obj = null;
                     }
-                    parent_name = bsp_entities[i].GetString("parent");
-                    cubemap_name = bsp_entities[i].GetString("cubemap");
-                    entity_name = bsp_entities[i].GetString("name");
+
                     if (!string.IsNullOrEmpty(entity_name)) md3_object.name = entity_name;
                     if (!string.IsNullOrEmpty(parent_name)) transform_children.Add(new ObjectStringPair(md3_object, parent_name));
                     if (!string.IsNullOrEmpty(cubemap_name)) cubemap_users.Add(new ObjectStringPair(md3_object, cubemap_name));
@@ -1499,7 +1616,7 @@ public class BSPMapImport : EditorWindow
 
                 case "env_sound":
                     string snd_path = bsp_entities[i].GetString("wavname");
-                    if (string.IsNullOrEmpty(snd_path) || !snd_path.Contains("sound")) break;
+                    if (string.IsNullOrEmpty(snd_path)) break;
                     string clip_path = SoundPath + "/" + BSPCommon.GetPathInFolder(snd_path, "sound");
                     AudioClip clip1 = null;
                     for (int i2 = 0; i2 < map_sounds.Count; i2++)
@@ -1525,9 +1642,12 @@ public class BSPMapImport : EditorWindow
                     if (clip1 == null) break;
                     entity_name = bsp_entities[i].GetString("name");
                     game_object_name = string.IsNullOrEmpty(entity_name) ? clip1.name : entity_name;
-                    GameObject snd_obj = new GameObject(game_object_name);
+                    GameObject snd_obj = BSPGameObjectHelper.CreateTaggedGameObject(game_object_name);
                     snd_obj.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
-                    AudioSource src1 = snd_obj.AddComponent<AudioSource>();
+
+                    // new sound object!
+                    UBSPEntities.UBSPSound src1 = snd_obj.AddComponent<UBSPEntities.UBSPSound>();
+
                     src1.clip = clip1;
                     src1.volume = Mathf.Clamp01(bsp_entities[i].GetFloat("volume", 1.0f));
                     src1.spatialBlend = Mathf.Clamp01(bsp_entities[i].GetFloat("blend", 1.0f));
@@ -1544,7 +1664,7 @@ public class BSPMapImport : EditorWindow
                 case "light_point":
                     entity_name = bsp_entities[i].GetString("name");
                     game_object_name = string.IsNullOrEmpty(entity_name) ? "LightPoint" : entity_name;
-                    GameObject light_obj = new GameObject(game_object_name);
+                    GameObject light_obj = BSPGameObjectHelper.CreateTaggedGameObject(game_object_name);
                     light_obj.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
                     Light light1 = light_obj.AddComponent<Light>();
                     light1.type = LightType.Point;
@@ -1573,7 +1693,7 @@ public class BSPMapImport : EditorWindow
                 case "env_cubemap":
                     entity_name = bsp_entities[i].GetString("name");
                     game_object_name = string.IsNullOrEmpty(entity_name) ? "Cubemap" : entity_name;
-                    GameObject cmap_obj = new GameObject(game_object_name);
+                    GameObject cmap_obj = BSPGameObjectHelper.CreateTaggedGameObject(game_object_name);
                     cmap_obj.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
                     ReflectionProbe cmap_ref = cmap_obj.AddComponent<ReflectionProbe>();
                     int ref_resolution = bsp_entities[i].GetInt("resolution", 2);
@@ -1603,11 +1723,11 @@ public class BSPMapImport : EditorWindow
                 case "info_transform":
                     entity_name = bsp_entities[i].GetString("name");
                     if (string.IsNullOrEmpty(entity_name)) break;
-                    GameObject transform_obj = new GameObject(entity_name);
+                    GameObject transform_obj = BSPGameObjectHelper.CreateTaggedGameObject(entity_name);
                     transform_obj.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
                     break;
 
-#if INFO_PLAYER_START
+
                 case "info_player_start":
 
                     GameObject player_object = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Player.prefab", typeof(GameObject)) as GameObject;
@@ -1627,17 +1747,21 @@ public class BSPMapImport : EditorWindow
                     camera_object.transform.rotation = player_object.transform.rotation;
 
                     break;
-#endif
 
-#if CUSTOM_ENTITIES
+
                 case "brush_trigger":
                     entity_name = bsp_entities[i].GetString("name");
+
+                    // trigger targets
+                    string target_in = bsp_entities[i].GetString("targetin");
+                    string target_out = bsp_entities[i].GetString("targetout");
+
                     game_object_name = string.IsNullOrEmpty(entity_name) ? "Trigger" : entity_name;
                     string model_id = bsp_entities[i].GetString("model");
                     int model_index = int.Parse(model_id.Substring(1, model_id.Length - 1));
                     Vector3 trigger_origin = (bsp_models[model_index].mins + bsp_models[model_index].maxs) * 0.5f;
                     Vector3 trigger_size = bsp_models[model_index].maxs - bsp_models[model_index].mins;
-                    GameObject trigger_object = new GameObject(game_object_name);
+                    GameObject trigger_object = BSPGameObjectHelper.CreateTaggedGameObject(game_object_name);
                     trigger_object.transform.position = trigger_origin;
                     BoxCollider bc_t = trigger_object.AddComponent<BoxCollider>();
                     bc_t.isTrigger = true;
@@ -1648,20 +1772,34 @@ public class BSPMapImport : EditorWindow
                     t1.once = ((spawn_flags2 & 0x00000008) > 0);
                     t1.partialMatch = ((spawn_flags2 & 0x00000010) > 0);
                     t1.restrictName = bsp_entities[i].GetString("restrict");
+
+                    if (!string.IsNullOrEmpty(target_in)) target_users.Add(new ObjectStringPair(trigger_object, target_in));
+                    if (!string.IsNullOrEmpty(target_out)) target_users.Add(new ObjectStringPair(trigger_object, target_out));
+
+
                     break;
 
-                    //case "path_track":
-                    //entity_name = bsp_entities[i].GetString("name");
-                    //string next_track = bsp_entities[i].GetString("next");
-                    //game_object_name = string.IsNullOrEmpty(entity_name) ? "PathTrack" : entity_name;
-                    //GameObject path_track_obj = new GameObject(game_object_name);
-                    //path_track_obj.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
-                    //Entities.PathTrack path_track = path_track_obj.AddComponent<Entities.PathTrack>();
-                    //path_track.speed = bsp_entities[i].GetFloat("speed", 0);
-                    //scene_path_tracks.Add(path_track);
-                    //path_track_links.Add(next_track);
-                    //break;
-#endif
+                case "brush_playerclip":
+
+                    entity_name = bsp_entities[i].GetString("name");
+
+                    game_object_name = string.IsNullOrEmpty(entity_name) ? "Player Clip" : entity_name;
+                    model_id = bsp_entities[i].GetString("model");
+                    model_index = int.Parse(model_id.Substring(1, model_id.Length - 1));
+                    trigger_origin = (bsp_models[model_index].mins + bsp_models[model_index].maxs) * 0.5f;
+                    trigger_size = bsp_models[model_index].maxs - bsp_models[model_index].mins;
+
+                    trigger_object = BSPGameObjectHelper.CreateTaggedGameObject(game_object_name);
+                    trigger_object.transform.position = trigger_origin;
+
+                    bc_t = trigger_object.AddComponent<BoxCollider>();
+                    bc_t.isTrigger = false;
+                    bc_t.center = new Vector3(0, 0, 0);
+                    bc_t.size = trigger_size;
+
+                    break;
+
+
             }
         }
 
@@ -1675,7 +1813,7 @@ public class BSPMapImport : EditorWindow
             transform_children[i].object1.transform.parent = GameObject.Find(transform_children[i].string1).transform;
         }
 
-#if CUSTOM_ENTITIES
+
         for (int i = 0; i < map_elevators.Count; i++)
         {
             string[] point_names = map_elevators[i].string1.Split(' ');
@@ -1708,13 +1846,6 @@ public class BSPMapImport : EditorWindow
             }
         }
 
-        //for (int i = 0; i < scene_path_tracks.Count; i++)
-        //{
-        //if (!string.IsNullOrEmpty(path_track_links[i])) scene_path_tracks[i].next = GameObject.Find(path_track_links[i]).GetComponent<Entities.PathTrack>();
-        //}
-        //scene_path_tracks = null;
-        //path_track_links = null;		
-#endif
 
         bsp_entities = null;
         cubemap_users = null;
@@ -1788,7 +1919,7 @@ public class BSPMapImport : EditorWindow
         {
             for (int i = 0; i < bsp_models[source_id].n_faces; i++)
             {
-                if (!tex_infos[bsp_faces[bsp_models[source_id].face + i].tex_index].name.Contains("nodraw"))
+                if (!tex_infos[bsp_faces[bsp_models[source_id].face + i].tex_index].name.ContainsAny("nodraw", "playerclip", "trigger"))
                 {
                     face_indices.Add(bsp_models[source_id].face + i);
                 }
@@ -1891,7 +2022,7 @@ public class BSPMapImport : EditorWindow
         mesh1.name = object_name + "_m";
         if (smoothing_angle > 0) AverageMeshNormals(mesh1, smoothing_angle);
         int material_count = mesh_submeshes.Count;
-        GameObject model_object = new GameObject(object_name);
+        GameObject model_object = BSPGameObjectHelper.CreateTaggedGameObject(object_name);
         model_object.transform.position = origin;
         model_object.AddComponent<MeshFilter>().mesh = mesh1;
         Material[] mesh_materials = new Material[material_count];
@@ -2072,6 +2203,8 @@ public class BSPMapImport : EditorWindow
         if (entity == "brush_rotating") return true;
         if (entity == "brush_rigidbody") return true;
         if (entity == "brush_elevator") return true;
+        if (entity == "brush_trigger") return true;
+        if (entity == "brush_playerclip") return true;
         return false;
     }
 

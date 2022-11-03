@@ -13,6 +13,7 @@ TagManager:
   - MusicPlayer
   - InteractPrompt
   - LoadingScreen
+  - BSPGenerated
   layers:
   - Default
   - TransparentFX

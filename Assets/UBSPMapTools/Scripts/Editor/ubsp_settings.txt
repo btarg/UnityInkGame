@@ -1,7 +1,10 @@
 ﻿Assets/Q3Project
+Assets/Q3Project/Tools/q3map2.exe
+Assets/Q3Project/baseq3/maps/crystals.map
 Assets/UBSPMapTools/MapContent/Materials
-Assets/UBSPMapTools/MapContent/Models
+Assets/UBSPMapTools/MapContent/Prefabs
 Assets/UBSPMapTools/MapContent/Sound
-Assets/ModelPrefabs
-3000
-0.02
+0
+0
+0
+True
