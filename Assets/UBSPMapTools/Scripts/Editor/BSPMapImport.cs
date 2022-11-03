@@ -1,6 +1,3 @@
-using System.Net.Mime;
-using System.Data;
-
 /*
 Copyright (c) 2021 John Evans
 Modified by btarg, 2022
@@ -25,19 +22,18 @@ SOFTWARE.
 */
 
 using System;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using UnityEditor.Events;
-using UnityEngine.Events;
+using System.Threading;
+using System.Security.Cryptography;
 
 public class BSPMapImport : EditorWindow
 {
     private static BSPMapImport window;
 
+    private static string DataPath;
     private static string MaterialsPath;
     private static string ModelsPath;
     private static string SoundPath;
@@ -46,6 +42,12 @@ public class BSPMapImport : EditorWindow
     private static string CompilerPath;
     private static bool deleteBSP;
     private static bool clearObjects = true;
+
+    static Thread mainThread;
+
+    private static FileSystemWatcher watcher;
+    private static bool autoImport;
+    public static bool mapFileChanged = false;
 
     private static float UV2Padding;
     private static bool loadEntities = true;
@@ -426,17 +428,22 @@ public class BSPMapImport : EditorWindow
     [MenuItem("Quake Tools/Import Map")]
     public static void Init()
     {
+
         window = BSPMapImport.CreateInstance<BSPMapImport>();
         window.titleContent = new GUIContent("Import BSP");
 
         LoadSettings();
+        StartWatcher();
 
         window.Show();
     }
-    
+
 
     private static void LoadSettings()
     {
+        DataPath = Application.dataPath;
+        mainThread = Thread.CurrentThread;
+
         BSPCommon.LoadSettings();
         MaterialsPath = BSPCommon.MaterialsPath;
         ModelsPath = BSPCommon.ModelsPath;
@@ -445,8 +452,44 @@ public class BSPMapImport : EditorWindow
         CompilerPath = BSPCommon.CompilerPath;
         MaxMeshSurfaceArea = BSPCommon.MaxMeshSurfaceArea;
         UV2Padding = BSPCommon.UV2Padding;
-
         deleteBSP = BSPCommon.deleteBSP;
+        autoImport = BSPCommon.autoImport;
+
+    }
+
+    private static void UpdateWatcherPath()
+    {
+        Debug.Log("Watching file: " + MapPath);
+        watcher.Path = Path.GetDirectoryName(MapPath);
+        watcher.Filter = Path.GetFileName(MapPath);
+    }
+
+    private static void StartWatcher()
+    {
+        // stop last watcher
+        if (watcher != null)
+        {
+            watcher.Changed -= OnFileChanged;
+            watcher.Dispose();
+        }
+
+        Debug.Log("Starting file watcher...");
+
+        watcher = new FileSystemWatcher();
+        watcher.IncludeSubdirectories = false;
+        UpdateWatcherPath();
+        watcher.EnableRaisingEvents = true;
+
+        watcher.Changed += OnFileChanged;
+
+    }
+
+    public static void OnFileChanged(object sender, FileSystemEventArgs args)
+    {
+        if (mapFileChanged || !autoImport) {
+            return;
+        }
+        mapFileChanged = true;
     }
 
     void OnGUI()
@@ -463,11 +506,14 @@ public class BSPMapImport : EditorWindow
             BSPCommon.UV2Padding = UV2Padding;
             BSPCommon.MaxMeshSurfaceArea = MaxMeshSurfaceArea;
             BSPCommon.deleteBSP = deleteBSP;
+            BSPCommon.autoImport = autoImport;
             BSPCommon.SaveSettings();
+            UpdateWatcherPath();
         }
         if (GUILayout.Button("Load", GUILayout.Width(64)))
         {
             LoadSettings();
+            StartWatcher();
         }
 
         EditorGUILayout.EndHorizontal();
@@ -534,12 +580,14 @@ public class BSPMapImport : EditorWindow
         EditorGUILayout.EndHorizontal();
         MapPath = EditorGUILayout.TextField(MapPath);
 
+        autoImport = EditorGUILayout.Toggle("Auto-import on change", autoImport);
         deleteBSP = EditorGUILayout.Toggle("Delete BSP when done", deleteBSP);
         clearObjects = EditorGUILayout.Toggle("Remove old GameObjects", clearObjects);
 
-        if (GUILayout.Button("Import!", GUILayout.Height(25)))
+        if (GUILayout.Button("Import!", GUILayout.Height(32)) || mapFileChanged)
         {
-            if (clearObjects) {
+            if (clearObjects)
+            {
                 Debug.Log("Clearing objects from previous import...");
                 BSPGameObjectHelper.RemoveAllTaggedObjects();
             }
@@ -554,11 +602,11 @@ public class BSPMapImport : EditorWindow
             }
 
         }
-
-        if (GUILayout.Button("Remove all generated GameObjects", GUILayout.Height(25)))
+        if (GUILayout.Button("Remove all generated GameObjects", GUILayout.Height(24)))
         {
             BSPGameObjectHelper.RemoveAllTaggedObjects();
         }
+
     }
 
     static void ImportBsp(string input_path)
@@ -573,97 +621,98 @@ public class BSPMapImport : EditorWindow
 
     static void ImportMap(string input_path)
     {
-        if (string.IsNullOrEmpty(input_path))
+    
+        try
         {
-            return;
-        }
-        Debug.Log("Attempting to import map file: " + input_path);
-
-        string bsp_path = BSPCommon.RemoveExtension(input_path) + ".bsp";
-
-        if (File.Exists(bsp_path))
-        {
-            if (EditorUtility.DisplayDialog("Reimport", bsp_path + " already exists. Reimport the last version?", "Compile again", "Reimport from last compilation"))
+            if (string.IsNullOrEmpty(input_path))
             {
-                File.Delete(bsp_path);
-            }
-            else
-            {
-                Debug.Log("Importing existing BSP...");
-                ImportBsp(bsp_path);
                 return;
             }
-        }
 
-        // Convert compiler path to full path for windows
-        string fullPath = BSPCommon.ConvertPath(CompilerPath);
-        if (fullPath.StartsWith("Assets"))
-        {
-            fullPath = Path.Combine(Application.dataPath, fullPath.Replace("Assets/", ""));
-        }
+            Debug.Log("Attempting to import map file: " + input_path);
 
-        // also convert the input path for the map file
-        string inputPath = BSPCommon.ConvertPath(input_path);
-        if (inputPath.StartsWith("Assets"))
-        {
-            inputPath = Path.Combine(Application.dataPath, inputPath.Replace("Assets/", ""));
-        }
-
-        current_folder = Path.GetDirectoryName(inputPath);
-        string game_dir = BSPCommon.GetParentFolder(current_folder);
-
-        if (!File.Exists(fullPath))
-        {
-            EditorUtility.DisplayDialog("Q3Map2 Error", "q3map2.exe not found at " + fullPath, "OK");
-            return;
-        }
-        if (!File.Exists(inputPath))
-        {
-            EditorUtility.DisplayDialog("Map Error", "Please specify a map to compile", "OK");
-            return;
-        }
-
-        System.Diagnostics.ProcessStartInfo args1 = new System.Diagnostics.ProcessStartInfo(String.Format("\"{0}\"", fullPath), String.Format("\"{0}\"", inputPath));
-        args1.WorkingDirectory = game_dir;
-
-
-        System.Diagnostics.Process q3map = System.Diagnostics.Process.Start(args1);
-        q3map.WaitForExit(30000);
-        q3map.Close();
-
-        if (!File.Exists(bsp_path))
-        {
-            Debug.LogError("Map compiler did not generate a BSP file.");
-            return;
-        }
-
-        Debug.Log("Map compiled! Loading BSP...");
-        LoadBSP(bsp_path);
-
-        if (deleteBSP)
-        {
+            string bsp_path = BSPCommon.RemoveExtension(input_path) + ".bsp";
             File.Delete(bsp_path);
-            string metafile = BSPCommon.RemoveExtension(input_path) + ".meta";
-            if (File.Exists(metafile))
+
+            // Convert compiler path to full path for windows
+            string fullPath = BSPCommon.ConvertPath(CompilerPath);
+            if (fullPath.StartsWith("Assets"))
             {
-                File.Delete(metafile);
+                fullPath = Path.Combine(DataPath, fullPath.Replace("Assets/", ""));
             }
+
+            // also convert the input path for the map file
+            string inputPath = BSPCommon.ConvertPath(input_path);
+            if (inputPath.StartsWith("Assets"))
+            {
+                inputPath = Path.Combine(DataPath, inputPath.Replace("Assets/", ""));
+            }
+
+            current_folder = Path.GetDirectoryName(inputPath);
+            string game_dir = BSPCommon.GetParentFolder(current_folder);
+
+            if (!File.Exists(fullPath))
+            {
+                EditorUtility.DisplayDialog("Q3Map2 Error", "q3map2.exe not found at " + fullPath, "OK");
+                return;
+            }
+            if (!File.Exists(inputPath))
+            {
+                EditorUtility.DisplayDialog("Map Error", "Please specify a map to compile", "OK");
+                return;
+            }
+
+            System.Diagnostics.ProcessStartInfo args1 = new System.Diagnostics.ProcessStartInfo(String.Format("\"{0}\"", fullPath), String.Format("\"{0}\"", inputPath));
+            args1.WorkingDirectory = game_dir;
+
+
+            System.Diagnostics.Process q3map = System.Diagnostics.Process.Start(args1);
+            q3map.WaitForExit(30000);
+            q3map.Close();
+
+            if (!File.Exists(bsp_path))
+            {
+                Debug.LogError("Map compiler did not generate a BSP file.");
+                return;
+            }
+
+            Debug.Log("Map compiled! Loading BSP...");
+            LoadBSP(bsp_path);
+
+            if (deleteBSP)
+            {
+                File.Delete(bsp_path);
+                string metafile = BSPCommon.RemoveExtension(input_path) + ".meta";
+                if (File.Exists(metafile))
+                {
+                    File.Delete(metafile);
+                }
+            }
+
+            string df = input_path;
+            //if (File.Exists(df)) File.Delete(df);
+            df = BSPCommon.RemoveExtension(df) + ".srf";
+            if (File.Exists(df)) File.Delete(df);
+            df = BSPCommon.RemoveExtension(df) + ".prt";
+            if (File.Exists(df)) File.Delete(df);
+            //df = BSPCommon.RemoveExtension(df)+".jmx";
+            //if (File.Exists(df)) File.Delete(df);
+            df = BSPCommon.RemoveExtension(df) + ".bak";
+            if (File.Exists(df)) File.Delete(df);
+            df = BSPCommon.RemoveExtension(df) + ".max";
+            if (File.Exists(df)) File.Delete(df);
+            df = BSPCommon.RemoveExtension(df) + ".lin";
+            if (File.Exists(df)) File.Delete(df);
+
+            // unlock auto-import
+            mapFileChanged = false;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Map import failed: " + e);
+            throw;
         }
 
-        string df = input_path;
-        //if (File.Exists(df)) File.Delete(df);
-        df = BSPCommon.RemoveExtension(df) + ".srf";
-        if (File.Exists(df)) File.Delete(df);
-        df = BSPCommon.RemoveExtension(df) + ".prt";
-        if (File.Exists(df)) File.Delete(df);
-        //df = BSPCommon.RemoveExtension(df)+".jmx";
-        //if (File.Exists(df)) File.Delete(df);
-        df = BSPCommon.RemoveExtension(df) + ".bak";
-        if (File.Exists(df)) File.Delete(df);
-        df = BSPCommon.RemoveExtension(df) + ".max";
-        if (File.Exists(df)) File.Delete(df);
-        df = BSPCommon.RemoveExtension(df) + ".lin";
-        if (File.Exists(df)) File.Delete(df);
     }
 
     static void LoadBSP(string bsp_path)
