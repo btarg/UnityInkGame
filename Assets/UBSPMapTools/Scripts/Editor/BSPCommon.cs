@@ -9,7 +9,7 @@ public class BSPCommon : UnityEngine.Object
 {
 	// Settings
 	const string settings_file = "Assets/UBSPMapTools/Scripts/Editor/ubsp_settings.txt";
-	public static string Q3ProjectPath = "";
+	public static string Q3TexturesPath = "";
 	public static string CompilerPath = "";
 	public static string MaterialsPath = "Assets/Materials";
 	public static string ModelsPath = "Assets/Models";
@@ -145,7 +145,7 @@ public class BSPCommon : UnityEngine.Object
 	public static void SaveSettings ()
 	{
 		string[] settings = new string[10];
-		settings[0] = Q3ProjectPath;
+		settings[0] = Q3TexturesPath;
 		settings[1] = CompilerPath;
 		settings[2] = MapPath;
 		settings[3] = MaterialsPath;
@@ -167,7 +167,7 @@ public class BSPCommon : UnityEngine.Object
 		if (hasSettings) return true;
 		if (!File.Exists(settings_file)) return false;
 		string[] settings = File.ReadAllLines(settings_file);
-		Q3ProjectPath = settings[0];
+		Q3TexturesPath = settings[0];
 		CompilerPath = settings[1];
 		MapPath = settings[2];
 		MaterialsPath = settings[3];

@@ -45,6 +45,7 @@ public class BSPMapImport : EditorWindow
     private static string MapPath;
     private static string CompilerPath;
     private static bool deleteBSP;
+    private static bool clearObjects = true;
 
     private static float UV2Padding;
     private static bool loadEntities = true;
@@ -422,7 +423,7 @@ public class BSPMapImport : EditorWindow
         }
     }
 
-    [MenuItem("Quake Tools/BSP/Import Map")]
+    [MenuItem("Quake Tools/Import Map")]
     public static void Init()
     {
         window = BSPMapImport.CreateInstance<BSPMapImport>();
@@ -534,10 +535,15 @@ public class BSPMapImport : EditorWindow
         MapPath = EditorGUILayout.TextField(MapPath);
 
         deleteBSP = EditorGUILayout.Toggle("Delete BSP when done", deleteBSP);
+        clearObjects = EditorGUILayout.Toggle("Remove old GameObjects", clearObjects);
 
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(500), GUILayout.Height(27));
-        if (GUILayout.Button("Import!", GUILayout.Width(330), GUILayout.Height(25)))
+        if (GUILayout.Button("Import!", GUILayout.Height(25)))
         {
+            if (clearObjects) {
+                Debug.Log("Clearing objects from previous import...");
+                BSPGameObjectHelper.RemoveAllTaggedObjects();
+            }
+
             if (MapPath.EndsWith(".bsp"))
             {
                 ImportBsp(MapPath);
@@ -548,15 +554,11 @@ public class BSPMapImport : EditorWindow
             }
 
         }
-        EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.BeginHorizontal(GUILayout.Width(500), GUILayout.Height(27));
-        if (GUILayout.Button("Remove all generated GameObjects", GUILayout.Width(330), GUILayout.Height(25)))
+        if (GUILayout.Button("Remove all generated GameObjects", GUILayout.Height(25)))
         {
             BSPGameObjectHelper.RemoveAllTaggedObjects();
-
         }
-        EditorGUILayout.EndHorizontal();
     }
 
     static void ImportBsp(string input_path)

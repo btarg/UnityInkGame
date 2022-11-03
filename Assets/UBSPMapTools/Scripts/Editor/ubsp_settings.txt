@@ -1,4 +1,4 @@
-﻿Assets/Q3Project
+﻿Assets/Q3Project/baseq3/textures
 Assets/Q3Project/Tools/q3map2.exe
 Assets/Q3Project/baseq3/maps/crystals.map
 Assets/UBSPMapTools/MapContent/Materials

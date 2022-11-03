@@ -6,8 +6,8 @@ using System.Linq;
 
 public class MaterialGenerator : EditorWindow
 {
-    private string path = "Assets/";
-    private string output_path = "Assets/Materials";
+    private static string textures_path = "Assets/";
+    private static string material_output_path = "Assets/Materials";
     FilterMode filterMode = FilterMode.Point;
     private string shaderName = "Universal Render Pipeline/Unlit";
     private string texturePropertyName = "_BaseMap";
@@ -18,25 +18,50 @@ public class MaterialGenerator : EditorWindow
     public static void ShowWindow()
     {
         GetWindow<MaterialGenerator>("Material Generator");
+        LoadSettings();
     }
 
+    static void LoadSettings() {
+        BSPCommon.LoadSettings();
+        textures_path = BSPCommon.Q3TexturesPath;
+        material_output_path = BSPCommon.MaterialsPath;
+    }
 
     void OnGUI()
     {
+
+        EditorGUILayout.BeginHorizontal(GUILayout.Width(330), GUILayout.Height(20));
+        EditorGUILayout.LabelField("Settings", GUILayout.Width(64));
+        if (GUILayout.Button("Save", GUILayout.Width(64)))
+        {
+            BSPCommon.Q3TexturesPath = textures_path;
+            BSPCommon.MaterialsPath = material_output_path;
+            BSPCommon.SaveSettings();
+        }
+        if (GUILayout.Button("Load", GUILayout.Width(64)))
+        {
+            LoadSettings();
+        }
+
+        EditorGUILayout.EndHorizontal();
+        GUILayout.Space(24);
+
         GUILayout.Label("Current texture directory:");
-        GUILayout.Label(path);
+        textures_path = GUILayout.TextField(textures_path);
         if (GUILayout.Button("Browse texture folder"))
         {
-            path = EditorUtility.OpenFolderPanel("Select folder with textures", "Assets/", "");
+            textures_path = EditorUtility.OpenFolderPanel("Select folder with textures", "Assets/", "");
         }
 
 
-        GUILayout.Space(24);
+        GUILayout.Space(8);
         GUILayout.Label("Current output directory:");
-        GUILayout.Label(output_path);
+        
+        material_output_path = GUILayout.TextField(material_output_path);
+
         if (GUILayout.Button("Browse output folder"))
         {
-            output_path = EditorUtility.OpenFolderPanel("Select folder to dump materials to", "Assets/", "");
+            material_output_path = EditorUtility.OpenFolderPanel("Select folder to dump materials to", "Assets/", "");
         }
 
 
@@ -47,12 +72,12 @@ public class MaterialGenerator : EditorWindow
         GUILayout.Label("Texture Property Name");
         texturePropertyName = GUILayout.TextField(texturePropertyName);
 
-        GUILayout.Space(24);
         filterMode = (FilterMode)EditorGUILayout.EnumPopup("Filter Mode:", filterMode);
 
         GUILayout.Space(24);
         overwrite = GUILayout.Toggle(overwrite, "Overwrite existing files");
-        if (GUILayout.Button("GENERATE!"))
+        GUILayout.Space(8);
+        if (GUILayout.Button("GENERATE!", GUILayout.Height(32)))
         {
             Generate();
         }
@@ -61,9 +86,9 @@ public class MaterialGenerator : EditorWindow
 
     void Generate()
     {
-        if (path.Length > 0 && output_path.Length > 0)
+        if (textures_path.Length > 0 && material_output_path.Length > 0)
         {
-            var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories)
+            var files = Directory.EnumerateFiles(textures_path, "*.*", SearchOption.AllDirectories)
             .Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".jfif") || s.EndsWith(".png") || s.EndsWith(".tga"));
 
             foreach (var file in files)
@@ -86,20 +111,20 @@ public class MaterialGenerator : EditorWindow
                 string toRemove = fileName.Substring(0, fileName.Split("\\")[0].Length + 1);
                 fileName = fileName.Replace(toRemove, "");
 
-                string finalPath = Path.Combine(output_path, fileName) + ".mat";
+                string finalPath = Path.Combine(material_output_path, fileName) + ".mat";
                 finalPath = BSPCommon.ConvertPath(finalPath);
 
 
                 // the parent folder (1 level) is part of the file name usually
-                string dirName = Path.GetDirectoryName(BSPCommon.ConvertPath(output_path));
+                string dirName = Path.GetDirectoryName(BSPCommon.ConvertPath(material_output_path));
 
                 if (!Directory.Exists(dirName))
                 {
                     Directory.CreateDirectory(dirName);
                 }
-                if (!Directory.Exists(output_path))
+                if (!Directory.Exists(material_output_path))
                 {
-                    Directory.CreateDirectory(output_path);
+                    Directory.CreateDirectory(material_output_path);
                 }
                 if (!Directory.Exists(Path.GetDirectoryName(finalPath)))
                 {
