@@ -167,7 +167,7 @@ public class MainMenu : MonoBehaviour
 
     public void LoadButton()
     {
-        SceneLoader.GetInstance().LoadFromFile(SaveManager.GetSaveSlot());
+        SceneLoader.GetInstance().LoadFromFile(SaveManager.GetSaveSlot(), false);
 
         // stop rendering main menu
         gameObject.GetComponent<Canvas>().enabled = false;

@@ -51,12 +51,13 @@ public class LoadingScreen : MonoBehaviour
 
     IEnumerator LoadSceneAsync(string sceneName, bool fade = true)
     {
+        Time.timeScale = 1f;
         Debug.LogWarning("Async Loading Scene: " + sceneName);
 
         if (fadeObject != null && fade)
         {
             fadeObject.GetComponent<Animator>().SetTrigger("fadeIn");
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSecondsRealtime(.5f);
         }
 
         fadeObject.GetComponent<Image>().enabled = false;
@@ -65,7 +66,6 @@ public class LoadingScreen : MonoBehaviour
         isLoading = true;
         PauseMenu.canPause = false;
 
-        yield return new WaitForEndOfFrame();
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
 
@@ -95,6 +95,7 @@ public class LoadingScreen : MonoBehaviour
                     fadeObject.GetComponent<Animator>().SetTrigger("fadeOut");
                 }
                 onFinishedLoading.Invoke();
+                
                 
             }
             yield return null;
