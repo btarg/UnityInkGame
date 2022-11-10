@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,21 +45,21 @@ public class LoadingScreen : MonoBehaviour
 
     public void LoadScene(string sceneName, bool fade = true)
     {
-        StartCoroutine(LoadSceneAsync(sceneName, fade));
+        if (!isLoading)
+            StartCoroutine(LoadSceneAsync(sceneName, fade));
     }
 
     IEnumerator LoadSceneAsync(string sceneName, bool fade = true)
     {
-        Debug.Log("Loading Scene: " + sceneName);
-
-        // i dont know what the fuck is wrong with this
-        // this is dumb
+        Debug.LogWarning("Async Loading Scene: " + sceneName);
 
         if (fadeObject != null && fade)
         {
-            yield return new WaitForSeconds(.5f);
             fadeObject.GetComponent<Animator>().SetTrigger("fadeIn");
+            yield return new WaitForSeconds(.5f);
         }
+
+        fadeObject.GetComponent<Image>().enabled = false;
 
         loadingScreen.SetActive(true);
         isLoading = true;
@@ -75,32 +76,30 @@ public class LoadingScreen : MonoBehaviour
         while (!operation.isDone)
         {
             // lerp so the game doesn't look frozen
-            progress = Mathf.MoveTowards(progress, operation.progress + 0.1f, Time.deltaTime * lerpSpeed);
+            progress = Mathf.MoveTowards(progress, operation.progress, Time.unscaledDeltaTime * lerpSpeed);
 
             loadingBarFill.value = progress;
 
-            progressLabel.text = Mathf.CeilToInt(progress * 100f).ToString() + "%";
+            // add 10 because 90% is unity's equivalent of 100
+            progressLabel.text = (Mathf.CeilToInt(progress * 100f) + 10).ToString() + "%";
 
             if (progress >= 0.9f && !operation.allowSceneActivation)
             {
-                yield return new WaitForSecondsRealtime(0.1f);
                 operation.allowSceneActivation = true;
                 loadingScreen.SetActive(false);
                 isLoading = false;
                 PauseMenu.canPause = true;
 
-                if (fadeObject != null)
+                if (fadeObject != null && fade)
                 {
                     fadeObject.GetComponent<Animator>().SetTrigger("fadeOut");
                 }
                 onFinishedLoading.Invoke();
                 
             }
-
             yield return null;
-
         }
-        yield return null;
+        
 
     }
 

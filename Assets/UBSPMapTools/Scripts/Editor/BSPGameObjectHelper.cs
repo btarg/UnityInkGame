@@ -20,7 +20,7 @@ public class BSPGameObjectHelper
         foreach(GameObject go in allObjects) {
 
             // Delete all generated assets including player prefab
-            if (go.tag == BSPTag || go.GetComponent<UBSPEntities.UBSPPlayer>()) {
+            if (go.tag == BSPTag || go.tag == "Player") {
                 output.Add(go);
             }
         }

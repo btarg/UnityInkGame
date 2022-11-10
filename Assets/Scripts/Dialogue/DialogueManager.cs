@@ -89,7 +89,7 @@ public class DialogueManager : MonoBehaviour
         playerControls.FirstPerson.Jump.performed += OnSubmitPressed;
         playerControls.UI.PauseMenu.performed += OnSubmitPressed;
         playerControls.UI.Submit.performed += OnSubmitPressed;
-        playerControls.InputBox.Navigate.performed += OnNavigatePressed;
+        playerControls.UI.Navigate.performed += OnNavigatePressed;
 
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);

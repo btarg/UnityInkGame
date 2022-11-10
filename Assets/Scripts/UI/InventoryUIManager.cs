@@ -27,13 +27,14 @@ public class InventoryUIManager : MonoBehaviour
     void Start()
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        
+
         OnEnable();
         onCloseInventory.Invoke();
-        
+
     }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
 
         if (playerControls == null)
             playerControls = new PlayerControls();
@@ -44,7 +45,8 @@ public class InventoryUIManager : MonoBehaviour
         playerControls.UI.Cancel.performed += CloseButtonPressed;
     }
 
-    private void OnDisable() {
+    private void OnDisable()
+    {
         playerControls.Disable();
         playerControls.UI.Inventory.performed -= InventoryButtonPressed;
         playerControls.UI.PauseMenu.performed -= CloseButtonPressed;
@@ -69,21 +71,14 @@ public class InventoryUIManager : MonoBehaviour
         if (PauseMenu.PauseMenuOpen || DialogueManager.GetInstance().dialogueIsPlaying)
             return;
 
-        // inventoryUIElement = getInventoryUI();
-        // if (inventoryUIElement == null)
-        // {
-        //     return;
-        // }
-
         inventoryIsOpen = !inventoryIsOpen;
 
         if (inventoryIsOpen)
         {
-            // inventoryUIElement.SetActive(true);
-            
+
             onOpenInventory.Invoke();
-            
-            
+
+
             ItemButtons();
             // default to selecting first option if there is no item equipped but there is atleast 1 option
             if (!EventSystem.current.alreadySelecting && choices[0].gameObject.activeInHierarchy)
@@ -94,8 +89,6 @@ public class InventoryUIManager : MonoBehaviour
         }
         else
         {
-            // inventoryUIElement.SetActive(false);
-            
             onCloseInventory.Invoke();
         }
     }
@@ -113,13 +106,14 @@ public class InventoryUIManager : MonoBehaviour
     void ItemButtons()
     {
 
-        if (choices == null) {
+        if (choices == null)
+        {
             // Get choice buttons as children of the "InventoryButtons" object
             choices = GameObject.FindGameObjectWithTag("InventoryButtons").GetComponentsInChildren<Button>();
 
             choicesText = new TextMeshProUGUI[choices.Length];
             int cindex = 0;
-            
+
 
             // Get buttons text
             foreach (Button choice in choices)

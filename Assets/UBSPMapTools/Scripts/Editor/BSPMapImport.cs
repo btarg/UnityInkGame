@@ -1789,14 +1789,6 @@ public class BSPMapImport : EditorWindow
 
                     player_object.transform.eulerAngles = new Vector3(0, -90.0f - player_rotation, 0);
 
-                    CharacterController controller1 = player_object.GetComponent<CharacterController>();
-                    controller1.height = 1.8f;
-                    controller1.radius = 0.35f;
-
-                    GameObject camera_object = player_object.GetComponent<UBSPEntities.UBSPPlayer>().playerCamera.gameObject;
-                    camera_object.transform.position = player_object.transform.position + new Vector3(0, 0.7f, 0);
-                    camera_object.transform.rotation = player_object.transform.rotation;
-
                     break;
 
 

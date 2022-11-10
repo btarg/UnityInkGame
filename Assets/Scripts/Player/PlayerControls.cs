@@ -65,7 +65,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Sprint"",
-                    ""type"": ""PassThrough"",
+                    ""type"": ""Button"",
                     ""id"": ""ed44863a-ccd7-4e0e-b940-22308ad1ca24"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
@@ -249,7 +249,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9fd8c3c7-eac2-4211-bce1-54b6005b68d9"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -902,67 +902,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
-        },
-        {
-            ""name"": ""InputBox"",
-            ""id"": ""dccef4d2-7687-47a9-96c9-6014717963f7"",
-            ""actions"": [
-                {
-                    ""name"": ""Navigate"",
-                    ""type"": ""Button"",
-                    ""id"": ""772e405c-c476-4274-86a1-85469f8db4de"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""69494b86-9a31-4981-84a4-510e7e1976f4"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""83274cd1-9a1d-4f69-9811-3acb356599ca"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0a89da1d-28f6-4bfe-b2d1-aa9aca1ae028"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""cf083f4f-7d47-47fd-840a-e58f33f7379f"",
-                    ""path"": ""<Gamepad>/rightStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Navigate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
         }
     ],
     ""controlSchemes"": []
@@ -990,9 +929,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
         m_UI_Inventory = m_UI.FindAction("Inventory", throwIfNotFound: true);
-        // InputBox
-        m_InputBox = asset.FindActionMap("InputBox", throwIfNotFound: true);
-        m_InputBox_Navigate = m_InputBox.FindAction("Navigate", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1250,39 +1186,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
-
-    // InputBox
-    private readonly InputActionMap m_InputBox;
-    private IInputBoxActions m_InputBoxActionsCallbackInterface;
-    private readonly InputAction m_InputBox_Navigate;
-    public struct InputBoxActions
-    {
-        private @PlayerControls m_Wrapper;
-        public InputBoxActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Navigate => m_Wrapper.m_InputBox_Navigate;
-        public InputActionMap Get() { return m_Wrapper.m_InputBox; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(InputBoxActions set) { return set.Get(); }
-        public void SetCallbacks(IInputBoxActions instance)
-        {
-            if (m_Wrapper.m_InputBoxActionsCallbackInterface != null)
-            {
-                @Navigate.started -= m_Wrapper.m_InputBoxActionsCallbackInterface.OnNavigate;
-                @Navigate.performed -= m_Wrapper.m_InputBoxActionsCallbackInterface.OnNavigate;
-                @Navigate.canceled -= m_Wrapper.m_InputBoxActionsCallbackInterface.OnNavigate;
-            }
-            m_Wrapper.m_InputBoxActionsCallbackInterface = instance;
-            if (instance != null)
-            {
-                @Navigate.started += instance.OnNavigate;
-                @Navigate.performed += instance.OnNavigate;
-                @Navigate.canceled += instance.OnNavigate;
-            }
-        }
-    }
-    public InputBoxActions @InputBox => new InputBoxActions(this);
     public interface IFirstPersonActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1307,9 +1210,5 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
         void OnPauseMenu(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
-    }
-    public interface IInputBoxActions
-    {
-        void OnNavigate(InputAction.CallbackContext context);
     }
 }

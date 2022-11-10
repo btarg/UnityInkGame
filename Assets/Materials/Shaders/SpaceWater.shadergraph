@@ -2206,8 +2206,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -3420.000244140625,
-            "y": 2094.0,
+            "x": -3420.0,
+            "y": 2092.0,
             "width": 130.0,
             "height": 34.0
         }
@@ -5012,7 +5012,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": true
+    "m_Value": false
 }
 
 {

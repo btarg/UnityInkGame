@@ -16,7 +16,7 @@ public class InteractiveObject : MonoBehaviour
     public float cooldownTime = 1f;
 
     [Header("Level Transition")]
-    public Scene transitionScene;
+    public string transitionScene;
 
     [Header("Equipped Item Requirement")]
     public InventoryItem requiredItem = null;
@@ -66,13 +66,17 @@ public class InteractiveObject : MonoBehaviour
     private void UpdateInteractMessage()
     {
 
-        if (transitionScene != null)
+        if (!String.IsNullOrEmpty(transitionScene))
         {
             switch (interactionType)
             {
                 case InteractiveObject.InteractionType.GoTo:
-                    string locationName = SceneNames.GetSceneName(transitionScene.name);
-                    interactionDescription = "Go to " + locationName;
+
+                    string locationName = SceneNames.GetSceneName(transitionScene);
+                    interactionDescription = String.Format("Go to <color=yellow>{0}</color>", locationName);
+
+                    onPlayerInteract.AddListener(() => LoadingScreen.GetInstance().LoadScene(transitionScene));
+
                     break;
             }
 

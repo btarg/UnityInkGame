@@ -43,7 +43,7 @@
                 },
                 {
                     "name": "Sprint",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "ed44863a-ccd7-4e0e-b940-22308ad1ca24",
                     "expectedControlType": "Button",
                     "processors": "",
@@ -227,7 +227,7 @@
                 {
                     "name": "",
                     "id": "9fd8c3c7-eac2-4211-bce1-54b6005b68d9",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -876,67 +876,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Inventory",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "InputBox",
-            "id": "dccef4d2-7687-47a9-96c9-6014717963f7",
-            "actions": [
-                {
-                    "name": "Navigate",
-                    "type": "Button",
-                    "id": "772e405c-c476-4274-86a1-85469f8db4de",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "69494b86-9a31-4981-84a4-510e7e1976f4",
-                    "path": "<Gamepad>/dpad/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "83274cd1-9a1d-4f69-9811-3acb356599ca",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0a89da1d-28f6-4bfe-b2d1-aa9aca1ae028",
-                    "path": "<Gamepad>/leftStick/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "cf083f4f-7d47-47fd-840a-e58f33f7379f",
-                    "path": "<Gamepad>/rightStick/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

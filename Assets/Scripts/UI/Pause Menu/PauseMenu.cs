@@ -27,7 +27,7 @@ public class PauseMenu : MonoBehaviour
     public UnityEvent onSaved;
     PlayerControls controls;
 
-    UBSPEntities.UBSPPlayer kinematicPlayer;
+    ExamplePlayer kinematicPlayer;
     bool couldMove = true;
 
     SaveHelper helper;
@@ -44,7 +44,8 @@ public class PauseMenu : MonoBehaviour
         loader = SceneLoader.GetInstance();
 
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<UBSPEntities.UBSPPlayer>();
+        kinematicPlayer = playerObject.GetComponentInChildren<ExamplePlayer>();
+        
 
         OnEnable();
         onUnpause.Invoke();
@@ -107,12 +108,10 @@ public class PauseMenu : MonoBehaviour
     {
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
         playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<UBSPEntities.UBSPPlayer>();
+        kinematicPlayer = playerObject.GetComponentInChildren<ExamplePlayer>();
 
         // Resume Game
         EventSystem.current.SetSelectedGameObject(null);
-
-        // pauseMenuUI.SetActive(false);
 
         Time.timeScale = 1f;
         GameIsPaused = false;
@@ -124,19 +123,6 @@ public class PauseMenu : MonoBehaviour
         disableCanvas.enabled = true;
         Debug.Log("Game Resumed");
 
-    }
-
-    public GameObject getPauseMenuUI()
-    {
-        // stupid hacky shit because GetChild sucks
-        foreach (Transform child in gameObject.transform)
-        {
-            if (child.gameObject.CompareTag("PauseMenu"))
-            {
-                return child.gameObject;
-            }
-        }
-        return null;
     }
 
     public void OpenPauseMenu()
@@ -151,8 +137,6 @@ public class PauseMenu : MonoBehaviour
     public void StopTime()
     {
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
-        playerObject = GameObject.FindGameObjectWithTag("Player");
-        kinematicPlayer = playerObject.GetComponent<UBSPEntities.UBSPPlayer>();
 
         Time.timeScale = 0f;
         FreezePlayer();
@@ -162,6 +146,9 @@ public class PauseMenu : MonoBehaviour
 
     public void FreezePlayer()
     {
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        kinematicPlayer = playerObject.GetComponentInChildren<ExamplePlayer>();
+
         couldMove = kinematicPlayer.canMove;
         kinematicPlayer.canMove = false;
         GameIsPaused = true;
