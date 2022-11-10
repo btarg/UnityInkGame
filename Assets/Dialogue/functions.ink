@@ -2,6 +2,7 @@ EXTERNAL playSound(soundName)
 EXTERNAL getPlayerInput(outVar)
 EXTERNAL getEquippedItem()
 EXTERNAL givePlayerItem(itemID, amount)
+EXTERNAL getRandomIntInRange(min, max)
 
 === function playSound(soundName) ===
 ~ return

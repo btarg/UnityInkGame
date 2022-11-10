@@ -58,8 +58,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5208574627231566785}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -21.3875, y: 3.4906502, z: 15.3277}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: -0.00000004371139}
+  m_LocalPosition: {x: -21.3277, y: 3.4906502, z: 15.0125}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -300,8 +300,8 @@ MonoBehaviour:
   StableMovementSharpness: 10
   OrientationSharpness: 10
   OrientationMethod: 1
-  MaxAirMoveSpeed: 15
-  AirAccelerationSpeed: 18
+  MaxAirMoveSpeed: 8
+  AirAccelerationSpeed: 16
   Drag: 0.1
   AllowJumpingWhenSliding: 0
   JumpUpSpeed: 10
@@ -313,7 +313,7 @@ MonoBehaviour:
   - {fileID: 0}
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
-  Gravity: {x: 0, y: -30, z: 0}
+  Gravity: {x: 0, y: -20, z: 0}
   MeshRoot: {fileID: 5208067620762040616}
   CameraFollowPoint: {fileID: 5213005433386836604}
   CrouchedCapsuleHeight: 1
@@ -342,7 +342,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   DiscreteCollisionEvents: 0
   StepHandling: 1
-  MaxStepHeight: 0.5
+  MaxStepHeight: 1
   AllowSteppingWithoutStableGrounding: 0
   MinRequiredStepDepth: 0.1
   LedgeAndDenivelationHandling: 1

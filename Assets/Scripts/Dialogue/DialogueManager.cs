@@ -89,7 +89,7 @@ public class DialogueManager : MonoBehaviour
         playerControls.FirstPerson.Jump.performed += OnSubmitPressed;
         playerControls.UI.PauseMenu.performed += OnSubmitPressed;
         playerControls.UI.Submit.performed += OnSubmitPressed;
-        playerControls.UI.Navigate.performed += OnNavigatePressed;
+        playerControls.DialogBox.Navigate.performed += OnNavigatePressed;
 
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
@@ -180,7 +180,6 @@ public class DialogueManager : MonoBehaviour
             }
 
         });
-
 
         // Declare this function outside of the bind to allow for a return value
         Func<int, int, string> givePlayerItem = (int itemID, int amount) => {

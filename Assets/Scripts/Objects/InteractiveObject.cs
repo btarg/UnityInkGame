@@ -68,76 +68,71 @@ public class InteractiveObject : MonoBehaviour
 
         if (!String.IsNullOrEmpty(transitionScene))
         {
+            interactionType = InteractionType.GoTo;
+            string locationName = SceneNames.GetSceneName(transitionScene);
+            interactionDescription = String.Format("Go to <color=yellow>{0}</color>", locationName);
+
+            onPlayerInteract.AddListener(() => LoadingScreen.GetInstance().LoadScene(transitionScene));
+        }
+
+        if (requiredItem != null)
+        {
+
+            // Now check if the requirement was met
+            if (!requirementMet)
+            {
+
+                interactionType = InteractionType.ItemRequired;
+                interactionDescription = String.Format("<color=red>Requires {0} (x{1})</color>", requiredItem.displayName, requiredItemAmount);
+                // Don't do the normal interaction stuff
+                return;
+
+            }
+
+        }
+
+        if (character != null)
+        {
+            string characterColor = ColorUtility.ToHtmlStringRGB(character.characterColor);
+            string colouredName = String.Format("<color=#{0}>{1}</color>", characterColor, character.characterName);
+            string interactMessage = "";
             switch (interactionType)
             {
-                case InteractiveObject.InteractionType.GoTo:
-
-                    string locationName = SceneNames.GetSceneName(transitionScene);
-                    interactionDescription = String.Format("Go to <color=yellow>{0}</color>", locationName);
-
-                    onPlayerInteract.AddListener(() => LoadingScreen.GetInstance().LoadScene(transitionScene));
-
+                case InteractiveObject.InteractionType.Talk:
+                    interactMessage = "Speak to ";
+                    break;
+                case InteractiveObject.InteractionType.Generic:
+                    interactMessage = "Interact with ";
                     break;
             }
 
-            if (requiredItem != null)
+            interactionDescription = interactMessage + colouredName;
+        }
+
+        ItemPickup itemPickup = gameObject.GetComponent<ItemPickup>();
+
+        if (itemPickup != null)
+        {
+
+            string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
+
+            colouredName += String.Format(" (x{0})", itemPickup.amount.ToString());
+
+            interactionType = InteractiveObject.InteractionType.Generic;
+            string interactMessage = "Look at ";
+            if (itemPickup.canPickup)
             {
-
-                // Now check if the requirement was met
-                if (!requirementMet)
-                {
-
-                    interactionType = InteractionType.ItemRequired;
-                    interactionDescription = String.Format("<color=red>Requires {0} (x{1})</color>", requiredItem.displayName, requiredItemAmount);
-                    // Don't do the normal interaction stuff
-                    return;
-
-                }
-
+                interactionType = InteractiveObject.InteractionType.Pickup;
+                interactMessage = "Take ";
             }
 
-            if (character != null)
-            {
-                string characterColor = ColorUtility.ToHtmlStringRGB(character.characterColor);
-                string colouredName = String.Format("<color=#{0}>{1}</color>", characterColor, character.characterName);
-                string interactMessage = "";
-                switch (interactionType)
-                {
-                    case InteractiveObject.InteractionType.Talk:
-                        interactMessage = "Speak to ";
-                        break;
-                    case InteractiveObject.InteractionType.Generic:
-                        interactMessage = "Interact with ";
-                        break;
-                }
-
-                interactionDescription = interactMessage + colouredName;
-            }
-
-            ItemPickup itemPickup = gameObject.GetComponent<ItemPickup>();
-
-            if (itemPickup != null)
-            {
-
-                string colouredName = String.Format("<color=yellow>{0}</color>", itemPickup.item.displayName);
-
-                colouredName += String.Format(" (x{0})", itemPickup.amount.ToString());
-
-                interactionType = InteractiveObject.InteractionType.Generic;
-                string interactMessage = "Look at ";
-                if (itemPickup.canPickup)
-                {
-                    interactionType = InteractiveObject.InteractionType.Pickup;
-                    interactMessage = "Take ";
-                }
-
-                interactionDescription = interactMessage + colouredName;
-
-            }
-
+            interactionDescription = interactMessage + colouredName;
 
         }
+
+
     }
+
 
     public void PlayerInteract()
     {

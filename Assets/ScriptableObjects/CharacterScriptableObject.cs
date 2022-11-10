@@ -6,5 +6,4 @@ public class CharacterScriptableObject : ScriptableObject
     public string characterName;
     public Color characterColor;
     public AudioClip[] characterTypingSounds;
-    public AudioClip[] characterIdleSounds;
 }

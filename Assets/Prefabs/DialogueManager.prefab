@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -49,7 +50,6 @@ MonoBehaviour:
   continueIcon: {fileID: 0}
   dialogueText: {fileID: 0}
   displayNameText: {fileID: 0}
-  portraitAnimator: {fileID: 0}
   choicesUIElement: {fileID: 0}
   choices:
   - {fileID: 0}
@@ -61,4 +61,7 @@ MonoBehaviour:
   inputUIElement: {fileID: 0}
   characterScriptableObjects:
   - {fileID: 11400000, guid: d62067460959dd7418c3f2caf0490090, type: 2}
+  - {fileID: 11400000, guid: dfc364c740ad1394f8ba1e3cd1b5524b, type: 2}
+  - {fileID: 11400000, guid: b48a41177679d82498ef3875b3bbf445, type: 2}
+  - {fileID: 11400000, guid: 787629591d768ec47b4cbcefb6809f6d, type: 2}
   defaultTypingClip: {fileID: 0}
