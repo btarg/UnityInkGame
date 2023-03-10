@@ -46,6 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 306096970e633ab4a9ad0d9f33d5a8da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onSceneLoaded:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5788347482897515155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70,3 +73,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aea97070b6fbbca43bfb777aa9f50c54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  items:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 11400000, guid: a179d4f838a3a004ca58cf78e9ce368b, type: 2}
+  - {fileID: 11400000, guid: 2d432171f8a6f4b449941fc3e4a41f85, type: 2}
+  gameEvents:
+  - {fileID: 11400000, guid: d04c37b61b628e24e93a3f6e259e7c66, type: 2}

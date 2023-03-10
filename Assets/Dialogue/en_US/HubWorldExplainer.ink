@@ -6,9 +6,9 @@ INCLUDE ../functions.ink
 { tutorial_complete == true: -> already_spoken | -> start }
 
 === already_spoken ===
-i have acquainted you with the <color=yellow> ((hub world/spaghetti)), yes? </color>
+i have acquainted you with the <color=yellow>((hub world/spaghetti)), yes?</color>
 
-+ [Yes]
++ [I'm familiar]
     -> finished_speaking
 + [Hub World?]
     -> named
@@ -48,11 +48,11 @@ the <color=yellow>dream</color> is our home now
 many branching paths: the <color=yellow>hub</color> is like ((spaghetti/noodle)), you may feel disoriented
 the <color=yellow>pause menu</color> will carry you home when you tire of exploration
 you may also use it to <color=yellow>relive a ((memory/save/moment))</color>
+~ tutorial_complete = true
+we are ((finished/complete)) now, {player_name}. venture!
 -> finished_speaking
 
 === finished_speaking ===
-~ tutorial_complete = true
-we are ((finished/complete)) now, {player_name}. venture!
 return here when you become lost and afraid
 
 -> END

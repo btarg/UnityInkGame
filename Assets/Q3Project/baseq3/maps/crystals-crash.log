@@ -1,0 +1,81 @@
+Renderer info: AMD Radeon RX 5700 version 4.6.0 Compatibility Profile Context 23.2.2.230217 from ATI Technologies Inc.
+Depth buffer bits: 24
+Multisampling enabled
+Adding file system path C:\Users\BenTa\Downloads\TrenchBroom-Win64-v2022.2-RC1-Release\defaults\assets
+Adding file system path C:\Users\BenTa\Downloads\TrenchBroom-Win64-v2022.2-RC1-Release\defaults\assets
+Loading document from E:\Unity Projects\Dialogue\Assets\Q3Project\baseq3\maps\crystals.map
+Adding file system path C:\Users\BenTa\Downloads\TrenchBroom-Win64-v2022.2-RC1-Release\defaults\assets
+Adding file system path C:\Users\BenTa\Downloads\TrenchBroom-Win64-v2022.2-RC1-Release\defaults\assets
+Invalid default value '64 64 128' for integer property definition: integer (line 254)
+Invalid default value '1024 1024 1024' for integer property definition: integer (line 255)
+Loaded entity definition file entities.ent
+Loaded texture collection 'textures' in 0ms
+Could not load texture collection 'textures\ai': Directory not found: 'textures\ai'
+Could not load texture collection 'textures\ben': Directory not found: 'textures\ben'
+Could not load texture collection 'textures\ben\crystals': Directory not found: 'textures\ben\crystals'
+Could not load texture collection 'textures\dev': Directory not found: 'textures\dev'
+Could not load texture collection 'textures\dev_kenney': Directory not found: 'textures\dev_kenney'
+Could not load texture collection 'textures\dev_kenney\Dark': Directory not found: 'textures\dev_kenney\Dark'
+Could not load texture collection 'textures\dev_kenney\Green': Directory not found: 'textures\dev_kenney\Green'
+Could not load texture collection 'textures\dev_kenney\Light': Directory not found: 'textures\dev_kenney\Light'
+Could not load texture collection 'textures\dev_kenney\Orange': Directory not found: 'textures\dev_kenney\Orange'
+Could not load texture collection 'textures\dev_kenney\Purple': Directory not found: 'textures\dev_kenney\Purple'
+Could not load texture collection 'textures\dev_kenney\Red': Directory not found: 'textures\dev_kenney\Red'
+Could not load texture collection 'textures\sbs1': Directory not found: 'textures\sbs1'
+Could not load texture collection 'textures\sbs1\128x128': Directory not found: 'textures\sbs1\128x128'
+Could not load texture collection 'textures\sbs1\128x128\Bricks': Directory not found: 'textures\sbs1\128x128\Bricks'
+Could not load texture collection 'textures\sbs1\128x128\Grass': Directory not found: 'textures\sbs1\128x128\Grass'
+Could not load texture collection 'textures\sbs1\128x128\Roofs': Directory not found: 'textures\sbs1\128x128\Roofs'
+Could not load texture collection 'textures\sbs1\128x128\Tile': Directory not found: 'textures\sbs1\128x128\Tile'
+Could not load texture collection 'textures\sbs1\128x128\Tile\Materials': Directory not found: 'textures\sbs1\128x128\Tile\Materials'
+Could not load texture collection 'textures\sbs1\128x128\Wood': Directory not found: 'textures\sbs1\128x128\Wood'
+Could not load texture collection 'textures\sbs2': Directory not found: 'textures\sbs2'
+Could not load texture collection 'textures\sbs2\128x128': Directory not found: 'textures\sbs2\128x128'
+Could not load texture collection 'textures\sbs2\128x128\Brick': Directory not found: 'textures\sbs2\128x128\Brick'
+Could not load texture collection 'textures\sbs2\128x128\Dirt': Directory not found: 'textures\sbs2\128x128\Dirt'
+Could not load texture collection 'textures\sbs2\128x128\Elements': Directory not found: 'textures\sbs2\128x128\Elements'
+Could not load texture collection 'textures\sbs2\128x128\Metal': Directory not found: 'textures\sbs2\128x128\Metal'
+Could not load texture collection 'textures\sbs2\128x128\Plaster': Directory not found: 'textures\sbs2\128x128\Plaster'
+Could not load texture collection 'textures\sbs2\128x128\Stone': Directory not found: 'textures\sbs2\128x128\Stone'
+Could not load texture collection 'textures\sbs2\128x128\Tile': Directory not found: 'textures\sbs2\128x128\Tile'
+Could not load texture collection 'textures\sbs2\128x128\Wood': Directory not found: 'textures\sbs2\128x128\Wood'
+Loaded E:\Unity Projects\Dialogue\Assets\Q3Project\baseq3\maps\crystals.map in 86ms
+Adding file system path C:\Users\BenTa\Downloads\TrenchBroom-Win64-v2022.2-RC1-Release\defaults\assets
+Adding file system path C:\Users\BenTa\Downloads\TrenchBroom-Win64-v2022.2-RC1-Release\defaults\assets
+Adding file system path E:\Unity Projects\Dialogue\Assets\Q3Project\baseq3
+Adding file system path E:\Unity Projects\Dialogue\Assets\Q3Project\UBSPTrenchbroom
+Adding shader file system
+Loaded 0 shaders
+Linking shaders...
+Loaded 0 shaders
+Linking shaders...
+Loaded texture collection 'textures' in 6ms
+Loaded texture collection 'textures\ai' in 63ms
+Loaded texture collection 'textures\ben' in 0ms
+Loaded texture collection 'textures\ben\crystals' in 5ms
+Loaded texture collection 'textures\dev' in 2ms
+Loaded texture collection 'textures\dev_kenney' in 0ms
+Loaded texture collection 'textures\dev_kenney\Dark' in 219ms
+Loaded texture collection 'textures\dev_kenney\Green' in 215ms
+Loaded texture collection 'textures\dev_kenney\Light' in 215ms
+Loaded texture collection 'textures\dev_kenney\Orange' in 215ms
+Loaded texture collection 'textures\dev_kenney\Purple' in 218ms
+Loaded texture collection 'textures\dev_kenney\Red' in 221ms
+Loaded texture collection 'textures\sbs1' in 0ms
+Loaded texture collection 'textures\sbs1\128x128' in 0ms
+Loaded texture collection 'textures\sbs1\128x128\Bricks' in 56ms
+Loaded texture collection 'textures\sbs1\128x128\Grass' in 51ms
+Loaded texture collection 'textures\sbs1\128x128\Roofs' in 58ms
+Loaded texture collection 'textures\sbs1\128x128\Tile' in 58ms
+Loaded texture collection 'textures\sbs1\128x128\Tile\Materials' in 0ms
+Loaded texture collection 'textures\sbs1\128x128\Wood' in 48ms
+Loaded texture collection 'textures\sbs2' in 0ms
+Loaded texture collection 'textures\sbs2\128x128' in 0ms
+Loaded texture collection 'textures\sbs2\128x128\Brick' in 40ms
+Loaded texture collection 'textures\sbs2\128x128\Dirt' in 33ms
+Loaded texture collection 'textures\sbs2\128x128\Elements' in 29ms
+Loaded texture collection 'textures\sbs2\128x128\Metal' in 34ms
+Loaded texture collection 'textures\sbs2\128x128\Plaster' in 39ms
+Loaded texture collection 'textures\sbs2\128x128\Stone' in 35ms
+Loaded texture collection 'textures\sbs2\128x128\Tile' in 29ms
+Loaded texture collection 'textures\sbs2\128x128\Wood' in 33ms

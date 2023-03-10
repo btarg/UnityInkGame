@@ -14,8 +14,20 @@ public class InkItemReferencesHolder : MonoBehaviour
 
     }
 
-    [SerializeField]
-    InventoryItem[] items;
+    [SerializeField] InventoryItem[] items;
+    [SerializeField] GameEvent[] gameEvents;
+
+    public static GameEvent GetEventFromName(string name)
+    {
+        foreach (GameEvent e in instance.gameEvents)
+        {
+            if (e.name == name)
+            {
+                return e;
+            }
+        }
+        return null;
+    }
 
     public static InventoryItem GetItemFromId(int itemID)
     {

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36d0a832805edbf49a65b217c3b4bca8, type: 3}
   m_Name: GenericNPC
   m_EditorClassIdentifier: 
-  characterName: Unnamed
+  characterName: ???
   characterColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   characterTypingSounds: []

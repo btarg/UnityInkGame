@@ -60,7 +60,7 @@ public class FirstPersonPlayer : MonoBehaviour
             Transform objectHit = hit.transform;
             InteractiveObject interactive = objectHit.gameObject.GetComponent<InteractiveObject>();
 
-            if (interactive != null && interactive.canInteract)
+            if (interactive != null && interactive.CanInteract)
             {
                 interactPrompt.SetActive(true);
 

@@ -32,12 +32,14 @@ public class PauseMenu : MonoBehaviour
 
     SaveHelper helper;
 
+    [SerializeField] private TextAsset saveTextJSON;
+    [SerializeField] private TextAsset hubChoiceJSON;
+
     // Make sure the game isn't paused on startup
     void Start()
     {
         helper = gameObject.AddComponent<SaveHelper>();
-        // pauseMenuUI = getPauseMenuUI();
-        // pauseMenuUI.SetActive(false);
+
 
         disableCanvas = GameObject.Find("PlayerHUD").GetComponent<Canvas>();
 
@@ -45,7 +47,7 @@ public class PauseMenu : MonoBehaviour
 
         playerObject = GameObject.FindGameObjectWithTag("Player");
         kinematicPlayer = playerObject.GetComponentInChildren<ExamplePlayer>();
-        
+
 
         OnEnable();
         onUnpause.Invoke();
@@ -152,13 +154,26 @@ public class PauseMenu : MonoBehaviour
         couldMove = kinematicPlayer.canMove;
         kinematicPlayer.canMove = false;
         GameIsPaused = true;
+
     }
 
     public void MenuButton()
     {
-        helper.Save();
-        LoadingScreen.GetInstance().LoadScene("MainMenu", false);
+        helper.Save(MenuButtonCallback);
+    }
 
+    void MenuButtonCallback(bool b)
+    {
+        LoadingScreen.GetInstance().LoadScene("MainMenu", false);
+    }
+
+    public void HubButton()
+    {
+        onUnpause.Invoke();
+        if (!DialogueManager.GetInstance().dialogueIsPlaying)
+        {
+            DialogueManager.GetInstance().EnterDialogueMode(hubChoiceJSON);
+        }
     }
 
     public void LoadButton()
@@ -170,11 +185,17 @@ public class PauseMenu : MonoBehaviour
 
     public void SaveButton()
     {
-        helper.Save();
+        helper.Save(SaveButtonCallback);
+    }
 
+    void SaveButtonCallback(bool b)
+    {
         onUnpause.Invoke();
         onSaved.Invoke();
 
+        if (!DialogueManager.GetInstance().dialogueIsPlaying)
+            DialogueManager.GetInstance().EnterDialogueMode(saveTextJSON);
     }
+
 
 }

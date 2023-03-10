@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BookNPC
   m_EditorClassIdentifier: 
   characterName: Booker
-  characterColor: {r: 0.59607846, g: 0.3019608, b: 0.2509804, a: 1}
+  characterColor: {r: 0, g: 0.37633944, b: 1, a: 1}
   characterTypingSounds: []

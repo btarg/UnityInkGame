@@ -11,7 +11,7 @@ public class InteractiveObject : MonoBehaviour
     [Header("Interaction Properties")]
     public InteractionType interactionType = InteractionType.Generic;
     public UnityEvent onPlayerInteract;
-    public bool canInteract = true;
+    [SerializeField] private bool canInteract = true;
     public bool hasCooldown = false;
     public float cooldownTime = 1f;
 
@@ -34,7 +34,16 @@ public class InteractiveObject : MonoBehaviour
     {
         UpdateInteractMessage();
         inventory = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<InventoryObject>();
+
+        if (!String.IsNullOrEmpty(transitionScene))
+            onPlayerInteract.AddListener(() => LoadingScreen.GetInstance().LoadScene(transitionScene));
     }
+
+    public void SetCanInteract(bool newValue)
+    {
+        canInteract = newValue;
+    }
+    public bool CanInteract { get { return canInteract; } }
 
     private void Update()
     {
@@ -71,8 +80,6 @@ public class InteractiveObject : MonoBehaviour
             interactionType = InteractionType.GoTo;
             string locationName = SceneNames.GetSceneName(transitionScene);
             interactionDescription = String.Format("Go to <color=yellow>{0}</color>", locationName);
-
-            onPlayerInteract.AddListener(() => LoadingScreen.GetInstance().LoadScene(transitionScene));
         }
 
         if (requiredItem != null)
@@ -127,6 +134,9 @@ public class InteractiveObject : MonoBehaviour
             }
 
             interactionDescription = interactMessage + colouredName;
+
+            // pickup item is the default listener in pickup mode
+            onPlayerInteract.AddListener(itemPickup.GivePlayerItem);
 
         }
 

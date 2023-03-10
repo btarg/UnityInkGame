@@ -34,7 +34,7 @@ public class SaveHelper : MonoBehaviour
         }
     }
 
-    public void Save()
+    public void Save(Action<bool> callback)
     {
         GameObject player;
 
@@ -53,8 +53,8 @@ public class SaveHelper : MonoBehaviour
         so.currentScene = SceneManager.GetActiveScene().name;
 
         // Add player and camera's position and rotation
-        so.playerPosition = player.transform.position;
-        so.playerRotationEuler = player.transform.rotation.eulerAngles;
+        so.playerPosition = player.GetComponentInChildren<ExampleCharacterController>().gameObject.transform.position;
+        so.playerRotationEuler = player.GetComponentInChildren<ExampleCharacterController>().gameObject.transform.rotation.eulerAngles;
         so.cameraRotationEuler = player.gameObject.GetComponentInChildren<FirstPersonPlayer>().fpsCam.transform.rotation.eulerAngles;
         Debug.Log("Saved player position as: " + so.playerPosition);
         Debug.Log("Saved camera rotation as: " + so.cameraRotationEuler);
@@ -66,10 +66,10 @@ public class SaveHelper : MonoBehaviour
         so.equippedSlot = inventoryObject.getEquippedSlot();
         so.pickedUpItems = inventoryObject.pickedUpItems;
 
-        StartCoroutine(SaveScreenshotToSaveObject(so));
+        StartCoroutine(SaveScreenshotToSaveObject(so, callback));
     }
 
-    private IEnumerator SaveScreenshotToSaveObject(SaveObject so)
+    private IEnumerator SaveScreenshotToSaveObject(SaveObject so, Action<bool> callback)
     {
         List<Canvas> toReenable = new List<Canvas>();
 
@@ -91,6 +91,8 @@ public class SaveHelper : MonoBehaviour
 
         // Start serialising to a file
         SaveManager.Save(so);
+
+        callback(true);
     }
 
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.028205998, g: 0, b: 0.11513721, a: 1}
+  m_IndirectSpecularColor: {r: 0.032567874, g: 0, b: 0.11907438, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -195,7 +195,7 @@ MonoBehaviour:
   transitionScene: 
   requiredItem: {fileID: 11400000, guid: 756d41674673bf44f96cbff2858d301c, type: 2}
   requiredItemAmount: 1
-  takeRequiredItemFromPlayer: 1
+  takeRequiredItemFromPlayer: 0
   interactionDescription: 
   character: {fileID: 0}
 --- !u!65 &562378866

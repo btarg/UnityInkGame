@@ -11,8 +11,8 @@ using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour
 {
     [Header("Params")]
-    [SerializeField] private float typingSpeedDefault = 0.05f;
-    private float typingSpeed = 0.05f;
+    [SerializeField] private float typingSpeedDefault = 0.025f;
+    private float typingSpeed = 0.025f;
 
     [Header("Load Globals JSON")]
     [SerializeField] private TextAsset loadGlobalsJSON;
@@ -179,6 +179,22 @@ public class DialogueManager : MonoBehaviour
                 currentStory.variablesState["equipped_item_amount"] = "";
             }
 
+        });
+
+        currentStory.BindExternalFunction("getSaveFileDetails", () =>
+        {
+            currentStory.variablesState["current_save_slot"] = SaveManager.GetSaveSlot() + 1;
+            currentStory.variablesState["last_save_time"] = RelativeDate.GetRelativeDate(SaveHelper.currentSaveObject().timestamp);
+        });
+
+        currentStory.BindExternalFunction("loadScene", (string sceneName) =>
+        {
+            LoadingScreen.GetInstance().LoadScene(sceneName);
+        });
+        currentStory.BindExternalFunction("fireEvent", (string eventName) =>
+        {
+            GameEvent e = InkItemReferencesHolder.GetEventFromName(eventName);
+            e.Raise();
         });
 
         // Declare this function outside of the bind to allow for a return value

@@ -62,6 +62,9 @@ public class SceneLoader : MonoBehaviour
         if (player == null) {
             return;
         }
+        if (currentSave.currentScene != scene.name) {
+            return;
+        }
 
 
         Vector3 savedPlayerPosition = currentSave.playerPosition;
@@ -75,9 +78,11 @@ public class SceneLoader : MonoBehaviour
         Debug.Log("Saved cam rotation is " + savedCameraRotation);
 
         Camera playerCamera = player.gameObject.GetComponentInChildren<FirstPersonPlayer>().fpsCam;
+        
 
         // Move player and rotate camera
-        player.transform.SetPositionAndRotation(savedPlayerPosition, player.transform.rotation);
+        //player.transform.SetPositionAndRotation(savedPlayerPosition, player.transform.rotation);
+        player.GetComponentInChildren<ExamplePlayer>().Character.Motor.SetPositionAndRotation(savedPlayerPosition, player.transform.rotation);
         playerCamera.transform.SetPositionAndRotation(playerCamera.transform.position, savedCameraRotation);
 
         InventoryObject inventoryObject = player.GetComponentInChildren<InventoryObject>();

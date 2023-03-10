@@ -11,7 +11,7 @@ public class SceneNames
     private static void Init()
     {
         sceneDictionary = new Dictionary<string, string>();
-        sceneDictionary.Add("BSPTest", "Hub World");
+        sceneDictionary.Add("HubWorld", "Hub World");
         sceneDictionary.Add("TestLevel", "Dialog system testing");
 
     }
