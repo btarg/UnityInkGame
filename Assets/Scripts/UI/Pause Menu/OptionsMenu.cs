@@ -8,6 +8,11 @@ using TMPro;
 public class OptionsMenu : MonoBehaviour
 {
     public Slider volumeSlider;
+    public Slider fovSlider;
+
+    public TextMeshProUGUI volumeValueLabel;
+    public TextMeshProUGUI fovValueLabel;
+
     public TMP_Dropdown resolutionDropdown;
     public Toggle fullscreenToggle;
     AudioSource source;
@@ -18,10 +23,15 @@ public class OptionsMenu : MonoBehaviour
     void Start()
     {
         // volume options
-        float volume = PlayerPrefs.GetFloat("MusicVolume", 1.0f);
-        
+        float volume = Mathf.Floor(PlayerPrefs.GetFloat("MusicVolume", 1.0f));
+        float fov = PlayerPrefs.GetFloat("FOV", 0f);
+
         volumeSlider.value = volume;
-        SetMusicVolume(volume);
+        fovSlider.value = fov;
+
+        fovValueLabel.text = fov.ToString();
+        volumeValueLabel.text = (volume*100).ToString() + "%";
+
 
         // resolution options : https://www.youtube.com/watch?v=YOaYQrN1oYQ
         resolutions = Screen.resolutions;
@@ -62,18 +72,15 @@ public class OptionsMenu : MonoBehaviour
         Debug.Log("Set resolution index to " + resolutionIndex);
     }
 
+    public void SetFOV(float fov)
+    {
+        PlayerPrefs.SetFloat("FOV", fov);
+        fovValueLabel.text = fov.ToString();
+    }
     public void SetMusicVolume(float volume)
     {
-        source = GameObject.FindGameObjectWithTag("MusicPlayer").GetComponent<AudioSource>();
-        if (source == null)
-        {
-            return;
-        }
-
-        // set the "default volume" to prevent fading from messing with user settings
-        source.volume = volume;
-        source.gameObject.GetComponent<MusicPlayer>().defaultVolume = volume;
-
+        volume = Mathf.Floor(volume);
         PlayerPrefs.SetFloat("MusicVolume", volume);
+        volumeValueLabel.text = (volume*100).ToString() + "%";
     }
 }

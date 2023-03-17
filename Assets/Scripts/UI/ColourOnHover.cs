@@ -9,6 +9,8 @@ public class ColourOnHover : MonoBehaviour
     public Color hoverColour;
     public Color normalTextColor;
     public Color hoverTextColor;
+    public bool showPrefix = false;
+    string selectedPrefix = "<sprite name=\"point-hand\"> ";
     int selected = 1;
 
     private void Start() {
@@ -28,11 +30,21 @@ public class ColourOnHover : MonoBehaviour
         selected++;
 
         GetComponent<Image>().color = hoverColour;
-        GetComponentInChildren<TextMeshProUGUI>().color = hoverTextColor;
+        TextMeshProUGUI tmpro = GetComponentInChildren<TextMeshProUGUI>();
+        tmpro.color = hoverTextColor;
+
+        if (!tmpro.text.StartsWith(selectedPrefix) && showPrefix) {
+            tmpro.text = selectedPrefix + tmpro.text;
+        }
     }
     public void OnDeselected()
     {
+        TextMeshProUGUI tmpro = GetComponentInChildren<TextMeshProUGUI>();
         GetComponent<Image>().color = normalColour;
+
+        if (tmpro.text.StartsWith(selectedPrefix) && showPrefix) {
+            tmpro.text = tmpro.text.Replace(selectedPrefix, "");
+        }
         GetComponentInChildren<TextMeshProUGUI>().color = normalTextColor;
         selected--;
     }

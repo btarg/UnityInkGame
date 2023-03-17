@@ -62,6 +62,7 @@ public class SceneLoader : MonoBehaviour
         if (player == null) {
             return;
         }
+        // prevent loading inventory etc when the scene is loaded not from save
         if (currentSave.currentScene != scene.name) {
             return;
         }

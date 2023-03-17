@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2021 John Evans
-Modified by btarg, 2022
+Copyright (c) 2022, 2023 Ben Targett
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Threading;
-using System.Security.Cryptography;
+using System.Linq;
 
 public class BSPMapImport : EditorWindow
 {
@@ -71,6 +71,8 @@ public class BSPMapImport : EditorWindow
     static BSPFace[] bsp_faces;
     static int[] bsp_mesh_vertices;
     static List<BSPEntity> bsp_entities;
+
+    static List<GameObject> bsp_entities_objects = new List<GameObject>();
 
     static int node_mesh_count = 0;
 
@@ -428,7 +430,7 @@ public class BSPMapImport : EditorWindow
     [MenuItem("Quake Tools/Import Map")]
     public static void Init()
     {
-
+        AssetDatabase.Refresh();
         window = BSPMapImport.CreateInstance<BSPMapImport>();
         window.titleContent = new GUIContent("Import BSP");
 
@@ -436,6 +438,11 @@ public class BSPMapImport : EditorWindow
         StartWatcher();
 
         window.Show();
+    }
+
+    private void Reset() {
+        LoadSettings();
+        AssetDatabase.Refresh();
     }
 
 
@@ -689,20 +696,17 @@ public class BSPMapImport : EditorWindow
                 }
             }
 
-            string df = input_path;
-            //if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".srf";
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".prt";
-            if (File.Exists(df)) File.Delete(df);
-            //df = BSPCommon.RemoveExtension(df)+".jmx";
-            //if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".bak";
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".max";
-            if (File.Exists(df)) File.Delete(df);
-            df = BSPCommon.RemoveExtension(df) + ".lin";
-            if (File.Exists(df)) File.Delete(df);
+            string[] extensions = {".srf", ".prt", ".bak", ".max", ".lin"};
+
+            foreach (var ext in extensions)
+            {
+                string df = input_path;
+                df = BSPCommon.RemoveExtension(df) + ext;
+                if (File.Exists(df)) File.Delete(df);
+                // delete metas
+                df = BSPCommon.RemoveExtension(df) + ext + ".meta";
+                if (File.Exists(df)) File.Delete(df);
+            }
 
             // unlock auto-import
             mapFileChanged = false;
@@ -1592,6 +1596,8 @@ public class BSPMapImport : EditorWindow
         string game_object_name;
         string parent_name;
         int spawn_flags2;
+
+        bsp_entities_objects.Clear();
         for (int i = 0; i < bsp_entities.Count; i++)
         {
             entity_class_name = bsp_entities[i].GetString("classname");
@@ -1601,6 +1607,7 @@ public class BSPMapImport : EditorWindow
                     parent_name = bsp_entities[i].GetString("parent");
                     cubemap_name = bsp_entities[i].GetString("cubemap");
                     entity_name = bsp_entities[i].GetString("name");
+                    game_object_name = string.IsNullOrEmpty(entity_name) ? "Model" : entity_name;
 
                     string md3_path = bsp_entities[i].GetString("model");
                     if (string.IsNullOrEmpty(md3_path))
@@ -1613,6 +1620,7 @@ public class BSPMapImport : EditorWindow
                     string model_ext2 = model_path + ".prefab";
                     string asset_path;
                     GameObject model_object1 = null;
+
                     for (int i2 = 0; i2 < map_models.Count; i2++)
                     {
                         asset_path = AssetDatabase.GetAssetPath(map_models[i2]);
@@ -1636,9 +1644,30 @@ public class BSPMapImport : EditorWindow
                         }
                     }
                     if (model_object1 == null) break;
+
+
+                    // fix for requiring a MeshFilter: allow sprite objects
                     MeshFilter mf1 = model_object1.GetComponentInChildren<MeshFilter>();
-                    if (mf1 == null) break;
-                    Vector3 mesh_center = mf1.sharedMesh.bounds.center;
+                    Vector3 mesh_center;
+                    if (mf1 == null) {
+                        SpriteRenderer rend = model_object1.GetComponentInChildren<SpriteRenderer>();
+
+                        if (rend == null) {
+                            break;
+                        }
+                        
+                        // Get the center of the sprite renderer, then half its height, and take away half the height of the "model" object in TrenchBroom
+                        // Note: what the fuck
+                        float newHeight = rend.bounds.center.y - ((rend.bounds.size.y / 2) - (8.0f * ImportScale));
+                        mesh_center = new Vector3(rend.bounds.center.x, newHeight, rend.bounds.center.z);
+                        
+                        
+
+                    } else {
+                        mesh_center = mf1.sharedMesh.bounds.center;
+                    }
+
+               
                     Vector3 origin_offset = new Vector3(Mathf.Floor(mesh_center.x / ImportScale) * ImportScale, Mathf.Floor(mesh_center.y / ImportScale) * ImportScale, Mathf.Floor(mesh_center.z / ImportScale) * ImportScale);
                     Vector3 md3_origin = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
                     Vector3 angles = bsp_entities[i].GetVector3("angles");
@@ -1663,6 +1692,8 @@ public class BSPMapImport : EditorWindow
                     if (!string.IsNullOrEmpty(entity_name)) md3_object.name = entity_name;
                     if (!string.IsNullOrEmpty(parent_name)) transform_children.Add(new ObjectStringPair(md3_object, parent_name));
                     if (!string.IsNullOrEmpty(cubemap_name)) cubemap_users.Add(new ObjectStringPair(md3_object, cubemap_name));
+                    
+                    bsp_entities_objects.Add(md3_object);
                     break;
 
                 case "env_sound":
@@ -1710,6 +1741,8 @@ public class BSPMapImport : EditorWindow
                     src1.minDistance = range * 0.1f;
                     parent_name = bsp_entities[i].GetString("parent");
                     if (!string.IsNullOrEmpty(parent_name)) transform_children.Add(new ObjectStringPair(snd_obj, parent_name));
+                    
+                    bsp_entities_objects.Add(snd_obj);
                     break;
 
                 case "light_point":
@@ -1739,6 +1772,8 @@ public class BSPMapImport : EditorWindow
                     if ((spawn_flags2 & 0x00000001) > 0) light_obj.tag = "staticlight";
                     parent_name = bsp_entities[i].GetString("parent");
                     if (!string.IsNullOrEmpty(parent_name)) transform_children.Add(new ObjectStringPair(light_obj, parent_name));
+                    
+                    bsp_entities_objects.Add(light_obj);
                     break;
 
                 case "env_cubemap":
@@ -1769,6 +1804,7 @@ public class BSPMapImport : EditorWindow
                     spawn_flags2 = bsp_entities[i].GetInt("spawnflags", 0);
                     cmap_ref.hdr = ((spawn_flags2 & 0x00000001) > 0);
                     cmap_ref.mode = UnityEngine.Rendering.ReflectionProbeMode.Baked;
+                    bsp_entities_objects.Add(cmap_obj);
                     break;
 
                 case "info_transform":
@@ -1776,18 +1812,22 @@ public class BSPMapImport : EditorWindow
                     if (string.IsNullOrEmpty(entity_name)) break;
                     GameObject transform_obj = BSPGameObjectHelper.CreateTaggedGameObject(entity_name);
                     transform_obj.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
+                    bsp_entities_objects.Add(transform_obj);
                     break;
 
 
                 case "info_player_start":
 
-                    GameObject player_object = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Player.prefab", typeof(GameObject)) as GameObject;
-                    Instantiate(player_object);
+                    GameObject player_asset = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Player.prefab", typeof(GameObject)) as GameObject;
+                    GameObject player_object = Instantiate(player_asset);
                     player_object.transform.position = Q3ToUnity(bsp_entities[i].GetVector3("origin"));
                     float player_rotation = bsp_entities[i].GetFloat("angle", 0);
                     if (player_rotation == 0) player_rotation = bsp_entities[i].GetVector3("angles").y;
 
+                    
+
                     player_object.transform.eulerAngles = new Vector3(0, -90.0f - player_rotation, 0);
+                    bsp_entities_objects.Add(player_object);
 
                     break;
 
@@ -1818,7 +1858,8 @@ public class BSPMapImport : EditorWindow
 
                     if (!string.IsNullOrEmpty(target_in)) target_users.Add(new ObjectStringPair(trigger_object, target_in));
                     if (!string.IsNullOrEmpty(target_out)) target_users.Add(new ObjectStringPair(trigger_object, target_out));
-
+                    
+                    bsp_entities_objects.Add(trigger_object);
 
                     break;
 
@@ -1840,6 +1881,7 @@ public class BSPMapImport : EditorWindow
                     bc_t.center = new Vector3(0, 0, 0);
                     bc_t.size = trigger_size;
 
+                    bsp_entities_objects.Add(trigger_object);
                     break;
 
 
@@ -1914,10 +1956,13 @@ public class BSPMapImport : EditorWindow
 
         GameObject globalParent = new GameObject("BSP World Parent");
         globalParent.tag = BSPGameObjectHelper.BSPTag;
+        
+        // add the list of all BSP Entities (object references)
+        GameObject[] objects2 = objects.Concat(bsp_entities_objects.ToArray()).ToArray();
 
-        foreach (GameObject go in objects) {
+        foreach (GameObject go in objects2) {
             if (go.transform.parent == null) {
-                go.transform.parent = globalParent.transform;
+                go.transform.SetParent(globalParent.transform);
             }
         }
 

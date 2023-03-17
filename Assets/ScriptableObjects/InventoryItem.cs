@@ -5,4 +5,5 @@ using UnityEngine.UI;
 public class InventoryItem : ScriptableObject {
     public int Id;
     public string displayName;
+    public Sprite sprite;
 }

@@ -2,6 +2,7 @@ EXTERNAL playSound(soundName)
 EXTERNAL getPlayerInput(outVar)
 EXTERNAL getEquippedItem()
 EXTERNAL givePlayerItem(itemID, amount)
+EXTERNAL takePlayerItem(itemID, amount)
 EXTERNAL getRandomIntInRange(min, max)
 EXTERNAL getSaveFileDetails()
 EXTERNAL loadScene(sceneName)
@@ -17,6 +18,9 @@ EXTERNAL fireEvent(eventName)
 ~ return
 
 === function givePlayerItem(itemID, amount) ===
+~ return
+
+=== function takePlayerItem(itemID, amount) ===
 ~ return
 
 === function getSaveFileDetails() ===

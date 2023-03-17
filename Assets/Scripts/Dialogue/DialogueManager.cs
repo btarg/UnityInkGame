@@ -43,6 +43,7 @@ public class DialogueManager : MonoBehaviour
     private CharacterScriptableObject currentCharacter;
 
     private bool canContinueToNextLine = false;
+    private bool isBlankLine = false;
     private bool waitingForInput = false;
     private bool submitted = false;
 
@@ -133,7 +134,8 @@ public class DialogueManager : MonoBehaviour
             && (playerControls.FirstPerson.Interact.WasPressedThisFrame()
             || playerControls.FirstPerson.Jump.WasPressedThisFrame()
             || playerControls.UI.PauseMenu.WasPressedThisFrame()
-            || playerControls.UI.Submit.WasPressedThisFrame()) || autoContinue != float.PositiveInfinity && canContinueToNextLine)
+            || playerControls.UI.Submit.WasPressedThisFrame()) || autoContinue != float.PositiveInfinity
+            || isBlankLine)
         {
             ContinueStory();
         }
@@ -194,24 +196,27 @@ public class DialogueManager : MonoBehaviour
         currentStory.BindExternalFunction("fireEvent", (string eventName) =>
         {
             GameEvent e = InkItemReferencesHolder.GetEventFromName(eventName);
+            Debug.Log("Firing event: " + e.name);
             e.Raise();
         });
 
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        InventoryObject inventory = playerObject.GetComponent<InventoryObject>();
+
         // Declare this function outside of the bind to allow for a return value
-        Func<int, int, string> givePlayerItem = (int itemID, int amount) => {
-            
-            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-            InventoryObject inventory = playerObject.GetComponent<InventoryObject>();
+        Func<int, int, string> givePlayerItem = (int itemID, int amount) =>
+        {
 
             // Get the item using its id - script always in level holds items to check against
             InventoryItem item = InkItemReferencesHolder.GetItemFromId(itemID);
             string itemName = item.displayName;
 
             inventory.AddItem(item, amount);
-            
+
             string amountString = "a";
 
-            if (amount > 1) {
+            if (amount > 1)
+            {
                 amountString = amount.ToString();
                 itemName += "s";
             }
@@ -220,14 +225,38 @@ public class DialogueManager : MonoBehaviour
             return itemDisplayLine;
         };
 
+        Func<int, int, string> takePlayerItem = (int itemID, int amount) =>
+        {
+
+            // Get the item using its id - script always in level holds items to check against
+            InventoryItem item = InkItemReferencesHolder.GetItemFromId(itemID);
+            string itemName = item.displayName;
+
+            inventory.RemoveItem(item, amount);
+
+            string amountString = "a";
+
+            if (amount > 1)
+            {
+                amountString = amount.ToString();
+                itemName += "s";
+            }
+            string itemDisplayLine = String.Format("({0} <color=yellow>{1}</color> was taken from your inventory.)", amountString, itemName);
+
+            return itemDisplayLine;
+        };
+
+
         currentStory.BindExternalFunction("givePlayerItem", givePlayerItem);
+        currentStory.BindExternalFunction("takePlayerItem", takePlayerItem);
 
         ContinueStory();
     }
 
-    private void SubmitInput()
+    private void SubmitInput(string input)
     {
-        submitted = true;
+        if (input.Length > 0)
+            submitted = true;
     }
 
     private void SelectSubmitButton(string unused)
@@ -271,7 +300,7 @@ public class DialogueManager : MonoBehaviour
         inputField.onSubmit.AddListener(SelectSubmitButton);
 
         // make the button able to submit the input 
-        inputUIElement.GetComponentInChildren<Button>().onClick.AddListener(SubmitInput);
+        inputUIElement.GetComponentInChildren<Button>().onClick.AddListener(() => SubmitInput(inputField.text));
 
         // wait until we enter an input (we do this because we can only get outVar here)
         yield return new WaitUntil(() => submitted == true);
@@ -299,6 +328,8 @@ public class DialogueManager : MonoBehaviour
 
         typingSpeed = typingSpeedDefault;
         autoContinue = float.PositiveInfinity;
+
+        isBlankLine = false;
     }
 
     private void ContinueStory()
@@ -337,37 +368,44 @@ public class DialogueManager : MonoBehaviour
         bool isAddingRichTextTag = false;
         skipTyping = false;
 
-        // display each letter one at a time
-        foreach (char letter in line.ToCharArray())
+        isBlankLine = false;
+        if (String.IsNullOrWhiteSpace(line) || line.Length < 1)
         {
-            // if the submit button is pressed, finish up displaying the line right away
-            if (skipTyping && autoContinue == float.PositiveInfinity)
+            isBlankLine = true;
+        }
+        else
+        {
+            // display each letter one at a time
+            foreach (char letter in line.ToCharArray())
             {
-                dialogueText.maxVisibleCharacters = line.Length;
-                break;
-            }
-
-            // check for rich text tag, if found, add it without waiting
-            if (letter == '<' || isAddingRichTextTag)
-            {
-                isAddingRichTextTag = true;
-                if (letter == '>')
+                // if the submit button is pressed, finish up displaying the line right away
+                if (skipTyping && autoContinue == float.PositiveInfinity)
                 {
-                    isAddingRichTextTag = false;
+                    dialogueText.maxVisibleCharacters = line.Length;
+                    break;
+                }
+
+                // check for rich text tag, if found, add it without waiting
+                if (letter == '<' || isAddingRichTextTag)
+                {
+                    isAddingRichTextTag = true;
+                    if (letter == '>')
+                    {
+                        isAddingRichTextTag = false;
+                    }
+                }
+                // if not rich text, add the next letter and wait a small time
+                else
+                {
+                    yield return new WaitForSeconds(typingSpeed);
+                    dialogueText.maxVisibleCharacters++;
+
+                    // only play the sound if the character is not a space or dot
+                    if (!string.IsNullOrWhiteSpace(letter.ToString()) && letter.ToString() != ".")
+                        PlayTypingSound();
                 }
             }
-            // if not rich text, add the next letter and wait a small time
-            else
-            {
-                yield return new WaitForSeconds(typingSpeed);
-                dialogueText.maxVisibleCharacters++;
-
-                // only play the sound if the character is not a space or dot
-                if (!string.IsNullOrWhiteSpace(letter.ToString()) && letter.ToString() != ".")
-                    PlayTypingSound();
-            }
         }
-
 
         // if we are in auto mode, then wait a bit before moving on
         StartCoroutine(ContinueToNextLine());
@@ -395,7 +433,7 @@ public class DialogueManager : MonoBehaviour
         {
             yield return new WaitForSeconds(autoContinue);
         }
-        else if (!waitingForInput)
+        else if (!waitingForInput && currentStory.currentChoices.Count == 0)
         {
             continueIcon.SetActive(true);
         }

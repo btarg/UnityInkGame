@@ -2,23 +2,22 @@
 INCLUDE ../globals.ink
 INCLUDE ../functions.ink
 
-{ player_name == "": -> start | -> already_spoken }
 { tutorial_complete == true: -> already_spoken | -> start }
-
-=== already_spoken ===
-i have acquainted you with the <color=yellow>((hub world/spaghetti)), yes?</color>
-
-+ [I'm familiar]
-    -> finished_speaking
-+ [Hub World?]
-    -> named
-+ [Change name]
-    -> change_name
 
 === start ===
 you feel ((new/inexperienced/confused))
 i have not seen you here before
 -> choose
+
+=== already_spoken ===
+i have acquainted you with the <color=yellow>((hub world/spaghetti)), yes?</color>
+
++ [<sprite name="door"> All Good!]
+    -> finished_speaking
++ [Hub World?]
+    -> named
++ [Change name]
+    -> change_name
 
 === choose ===
 what is your name? #input:player_name
@@ -31,12 +30,11 @@ your ((name/callsign)) is <color=yellow>{player_name}</color>?
     + [No]
         -> choose
 
-
 === change_name ===
 you wish for us to call you something else, <color=yellow>{player_name}</color>?
-    + [Yes]
+    + [New name]
         -> choose
-    + [No]
+    + [Keep name]
         -> finished_speaking
 
 === named ==
@@ -53,6 +51,6 @@ we are ((finished/complete)) now, {player_name}. venture!
 -> finished_speaking
 
 === finished_speaking ===
-return here when you become lost and afraid
+you may return here when you become lost and afraid
 
 -> END

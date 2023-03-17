@@ -18,7 +18,7 @@
                     "name": "Camera",
                     "type": "Value",
                     "id": "e2f1a720-ad28-45ca-9c0e-0c6a4aaa7e37",
-                    "expectedControlType": "Analog",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -63,6 +63,15 @@
                     "name": "Fire1",
                     "type": "Button",
                     "id": "418b7f74-708e-40ef-abd9-7f34105f33c7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Button",
+                    "id": "d5d08411-4f99-49fa-a606-89204556d266",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -267,6 +276,17 @@
                     "action": "Fire1",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b76bb36a-d3fe-4452-be7d-0bfe2fda1a74",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -317,7 +337,7 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "ScrollWheel",

@@ -10,3 +10,4 @@ VAR has_given_item = false
 VAR tutorial_complete = false
 VAR spoke_to_npc = false
 VAR flower_quest_complete = false
+VAR hub_book_open = false

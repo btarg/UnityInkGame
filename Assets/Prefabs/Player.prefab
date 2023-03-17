@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: 5322582428214465855}
   - component: {fileID: 3168964414847814961}
   - component: {fileID: 5208574625866152862}
+  - component: {fileID: 1185734723587061438}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: MainCamera
@@ -469,7 +470,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 75
+  field of view: 179
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -585,11 +586,24 @@ MonoBehaviour:
   interactRange: 4
   fpsCam: {fileID: 5192389593731608923}
   interactPrompt: {fileID: 0}
-  genericInteractionCrosshair: {fileID: 2800000, guid: 5ee48a79196a4994da2307531bd56803, type: 3}
-  talkInteractionCrosshair: {fileID: 2800000, guid: d14d388dac8de6e4abf565eb3fadea8d, type: 3}
-  pickupInteractionCrosshair: {fileID: 2800000, guid: 49cf6515597659c4fbb2f54340e2251b, type: 3}
-  goToInteractionCrosshair: {fileID: 2800000, guid: 079be8b2e337027429da8200c952983f, type: 3}
-  itemRequiredInteractionCrosshair: {fileID: 2800000, guid: c8de3997b1980834fa1d95cfc712f698, type: 3}
+  genericInteractionCrosshair: {fileID: 1142836422, guid: eae7bd3055e46dd469e97299610e2165, type: 3}
+  talkInteractionCrosshair: {fileID: 1358644570, guid: eae7bd3055e46dd469e97299610e2165, type: 3}
+  pickupInteractionCrosshair: {fileID: -1122164753, guid: eae7bd3055e46dd469e97299610e2165, type: 3}
+  goToInteractionCrosshair: {fileID: 1276434966, guid: eae7bd3055e46dd469e97299610e2165, type: 3}
+  itemRequiredInteractionCrosshair: {fileID: -713430771, guid: eae7bd3055e46dd469e97299610e2165, type: 3}
+--- !u!114 &1185734723587061438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5210226692129632303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed87f50d6a2dc4a40b09a3170b9576da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smooth: 10
 --- !u!1 &5210291222200238620
 GameObject:
   m_ObjectHideFlags: 0

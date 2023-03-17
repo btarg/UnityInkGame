@@ -11,11 +11,11 @@ public class FirstPersonPlayer : MonoBehaviour
     [SerializeField] GameObject interactPrompt;
 
     [Header("Texture2Ds")]
-    [SerializeField] Texture2D genericInteractionCrosshair;
-    [SerializeField] Texture2D talkInteractionCrosshair;
-    [SerializeField] Texture2D pickupInteractionCrosshair;
-    [SerializeField] Texture2D goToInteractionCrosshair;
-    [SerializeField] Texture2D itemRequiredInteractionCrosshair;
+    [SerializeField] Sprite genericInteractionCrosshair;
+    [SerializeField] Sprite talkInteractionCrosshair;
+    [SerializeField] Sprite pickupInteractionCrosshair;
+    [SerializeField] Sprite goToInteractionCrosshair;
+    [SerializeField] Sprite itemRequiredInteractionCrosshair;
 
     PlayerControls controls;
     bool isPressingInteract;
@@ -63,24 +63,23 @@ public class FirstPersonPlayer : MonoBehaviour
             if (interactive != null && interactive.CanInteract)
             {
                 interactPrompt.SetActive(true);
-
                 switch (interactive.interactionType)
                 {
                     case InteractiveObject.InteractionType.Generic:
-                        interactPrompt.GetComponentInChildren<RawImage>().texture = genericInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<Image>().sprite = genericInteractionCrosshair;
                         break;
                     case InteractiveObject.InteractionType.Talk:
-                        interactPrompt.GetComponentInChildren<RawImage>().texture = talkInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<Image>().sprite = talkInteractionCrosshair;
                         break;
                     case InteractiveObject.InteractionType.Pickup:
-                        interactPrompt.GetComponentInChildren<RawImage>().texture = pickupInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<Image>().sprite = pickupInteractionCrosshair;
                         break;
                     case InteractiveObject.InteractionType.GoTo:
-                        interactPrompt.GetComponentInChildren<RawImage>().texture = goToInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<Image>().sprite = goToInteractionCrosshair;
                         break;
 
                      case InteractiveObject.InteractionType.ItemRequired:
-                        interactPrompt.GetComponentInChildren<RawImage>().texture = itemRequiredInteractionCrosshair;
+                        interactPrompt.GetComponentInChildren<Image>().sprite = itemRequiredInteractionCrosshair;
                         break;   
                 }
 
